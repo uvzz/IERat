@@ -6,7 +6,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/uvzz/IERat">
-    <img src="https://github.com/uvzz/IERat/raw/master/logo_size.jpg" alt="Logo" width="80" height="80">
+    <img src="https://github.com/uvzz/IERat/raw/master/logo_size.jpg" alt="Logo" width="165" height="165">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
