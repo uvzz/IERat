@@ -9,7 +9,7 @@
     <img src="https://github.com/uvzz/IERat/raw/master/logo_size.jpg" alt="Logo" width="165" height="165">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Simple C2 framework against browser isolation proxies</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
