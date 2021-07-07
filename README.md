@@ -51,6 +51,10 @@ Client-> HTTP requests via browser automation -> C2 server -> HTTP page with a p
   
 The client uses a COM object and sends requests using Internet explorer, then extracts the favicon base64 value from the C2 server responses, which is controlled by the user to send commands through a simple console UI.
 This can be further developed to upload/download files, use HTTPS, and convert the client to a PowerShell script.
+  
+<p align="center">
+  <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="antiscanme" >
+</a>
 
 ### Prerequisites
 
@@ -78,10 +82,11 @@ Example for Kali/Debian:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-[ Add a GIF]
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
+  * Example with CrowdStrike sensor:
+  <p align="center">
+    <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="Logo" width="165" height="165">
+  </a>
+  
 <!-- ROADMAP -->
 ## Roadmap
 
