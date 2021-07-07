@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Web.Script.Serialization;
 
 namespace IERat.lib
 {
@@ -12,7 +12,8 @@ namespace IERat.lib
             {
                 favicon = favicon.Split(new string[] { "data:image/x-icon;base64," }, StringSplitOptions.None)[1];
                 string ResponseObjectJSON = Base64Decode(favicon);
-                ResponseObject responseObject = JsonSerializer.Deserialize<ResponseObject>(ResponseObjectJSON);
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                ResponseObject responseObject =  js.Deserialize<ResponseObject>(ResponseObjectJSON);
                 if (responseObject.Type == "NewAgent") { 
                     if (responseObject.Notes == "Authenticated")
                     {
@@ -52,7 +53,8 @@ namespace IERat.lib
 
         public string ToJSON()
         {
-            return JsonSerializer.Serialize(this);
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            return js.Serialize(this);
         }
     }
     public class RequestObject
@@ -66,7 +68,8 @@ namespace IERat.lib
         public List<TaskObject> CompletedTasks { get; set; }
         public string ToJSON()
         {
-            return JsonSerializer.Serialize(this);
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            return js.Serialize(this);
         }
     }
 }

