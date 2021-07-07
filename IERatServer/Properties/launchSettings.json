@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IERatServer": {
+      "commandName": "Project",
+      "commandLineArgs": "-IP 127.0.0.1 -Port 9000"
+    }
+  }
+}

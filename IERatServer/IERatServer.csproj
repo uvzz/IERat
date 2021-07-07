@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ConsoleTables" Version="2.4.2" />
+    <PackageReference Include="Figgle" Version="0.4.0" />
+    <PackageReference Include="NClap" Version="3.0.0" />
+    <PackageReference Include="Watson" Version="4.2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IERat\IERat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.CommandLine">
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\5.0.203\DotnetTools\dotnet-watch\5.0.203-servicing.21223.17\tools\net5.0\any\System.CommandLine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
