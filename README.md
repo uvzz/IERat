@@ -84,7 +84,7 @@ Example for Kali/Debian:
 
   * Example with CrowdStrike sensor:
   <p align="center">
-    <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="Logo" width="165" height="165">
+    <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="Logo" width="290" height="395">
   </a>
   
 <!-- ROADMAP -->
