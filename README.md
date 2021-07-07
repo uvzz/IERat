@@ -53,7 +53,7 @@ The client uses a COM object and sends requests using Internet explorer, then ex
 This can be further developed to upload/download files, use HTTPS, and convert the client to a PowerShell script.
   
 <p align="center">
-  <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="antiscanme" >
+  <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="antiscanme" width="290" height="395">
 </a>
 
 ### Prerequisites
@@ -83,9 +83,9 @@ Example for Kali/Debian:
 ## Usage
 
   * Example with CrowdStrike sensor:
-  <p align="center">
-    <img src="https://github.com/uvzz/IERat/blob/master/antiscanme.png?raw=true" alt="Logo" width="290" height="395">
-  </a>
+<video controls autoplay>
+  <source src="https://github.com/uvzz/IERat/blob/master/2021-07-07_21-31-51.mp4" type="video/mp4">
+ </video>
   
 <!-- ROADMAP -->
 ## Roadmap
