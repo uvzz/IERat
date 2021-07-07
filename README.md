@@ -45,7 +45,7 @@
 While I was penetration testing networks that use browser isolation proxies, I noticed that my malware is unable to communicate with its C2 server, although I used a cloudfront.com domain using domain fronting. I could access it via a web browser without any problem.
 After a little research on browser isolation products, I found that these proxy servers inject JavaScript files to the browser, enforcing their policy and changing the entire structure of the DOM. Therefore, the server responses will go through the proxy and will be re-rendered as images/SVG so only the browser will be able to understand them.
 
-But, I noticed that what’s inside the <head> tag, such as the page title and <link> tags will remain untouched. There, a possible C2  communication would be:
+But, I noticed that what’s inside the <head> tag, such as the page title and <link> tags will remain untouched (**not tested yet on all solutions**) There, a possible C2  communication would be:
   
 Client-> HTTP requests via browser automation -> C2 server -> HTTP page with a payload inside the headtag, e.g. favicon value -> browser isolation proxy -> browser controllered by client -> client
   
