@@ -42,8 +42,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 While I was penetration testing networks that use browser isolation proxies, I noticed that my malware is unable to communicate with its C2 server, although I used a cloudfront.com domain using domain fronting. I could access it via a web browser without any problem.
 After a little research on browser isolation products, I found that these proxy servers inject JavaScript files to the browser, enforcing their policy and changing the entire structure of the DOM. Therefore, the server responses will go through the proxy and will be re-rendered as images/SVG so only the browser will be able to understand them.
 
@@ -56,14 +54,11 @@ This can be further developed to upload/download files, use HTTPS, and convert t
 
 ### Prerequisites
 
-Set the BaseURL address to your C2 server address before compling the client!
-  
-* Install:
+Set the BaseURL address to your C2 server address before compling the client in IERat.cs
   
 .NET Framework 4.8 for the client.
   
 .NET Core 5.0 for the server.
-  
 
 ### Installation
 
@@ -92,6 +87,9 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 - Add HTTPS Support.
 - File uploads/downloads.
+- Screenshot option.
+- Webcam capture.
+- Keylogger.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
