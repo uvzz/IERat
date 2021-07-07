@@ -54,16 +54,12 @@ Client-> HTTP requests via browser automation -> C2 server -> HTTP page with a p
 The client uses a COM object and sends requests using Internet explorer, then extracts the favicon base64 value from the C2 server responses, which is controlled by the user to send commands through a simple console UI.
 This can be further developed to upload/download files, use HTTPS, and convert the client to a PowerShell script.
 
-<!-- GETTING STARTED -->
-## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
 .NET Framework 4.8 for the client.
 .NET Core 5.0 for the server.
+  
+Set the BaseURL address to your C2 server address before compling the client.
 
 ### Installation
 
@@ -72,13 +68,13 @@ To run the server on Linux, you should install dotnet-runtime-5.0
 Example for Kali/Debian:
 
 * Install and run the server on port 443:
-  ```wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
+  ```
+  wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
   sudo dpkg -i packages-microsoft-prod.deb
   sudo apt update
   sudo apt install -y dotnet-runtime-5.0
   sudo dotnet IERatServer.dll --ip=* --port=443
   ```
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
