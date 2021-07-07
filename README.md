@@ -56,10 +56,14 @@ This can be further developed to upload/download files, use HTTPS, and convert t
 
 ### Prerequisites
 
+Set the BaseURL address to your C2 server address before compling the client!
+  
+* Install:
+  
 .NET Framework 4.8 for the client.
+  
 .NET Core 5.0 for the server.
   
-Set the BaseURL address to your C2 server address before compling the client.
 
 ### Installation
 
