@@ -10,6 +10,8 @@
   </a>
 
   <h3 align="center">A simple C2 framework against browser isolation proxies</h3>
+  
+  *for testing / research purposes only!
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
