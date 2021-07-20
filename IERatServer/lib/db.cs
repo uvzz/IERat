@@ -93,28 +93,35 @@ namespace IERatServer.lib
         {
             while (true)
             {
-                if (channels.Count != 0)
+                try
                 {
-                    List<AgentChannel> TimedOutChannels = new();
-                    foreach (AgentChannel agentChannel in channels)
+                    if (channels.Count != 0)
                     {
-                        DateTime dateTime = DateTime.Parse(agentChannel.LastHeartBeatTime);
-                        DateTime dateTimeNow = DateTime.Now;
-                        var diffInSeconds = (dateTimeNow - dateTime).TotalSeconds;
-                        if (diffInSeconds > CLI.TimeOutSeconds)
+                        List<AgentChannel> TimedOutChannels = new();
+                        foreach (AgentChannel agentChannel in channels)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"\n---> Lost connection with agent #{agentChannel.InteractNum}\n");
-                            Console.ForegroundColor = ConsoleColor.White;
-                            TimedOutChannels.Add(agentChannel);
+                            DateTime dateTime = DateTime.Parse(agentChannel.LastHeartBeatTime);
+                            DateTime dateTimeNow = DateTime.Now;
+                            var diffInSeconds = (dateTimeNow - dateTime).TotalSeconds;
+                            if (diffInSeconds > CLI.TimeOutSeconds)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"\n---> Lost connection with agent #{agentChannel.InteractNum}\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                TimedOutChannels.Add(agentChannel);
+                            }
+                        }
+                        foreach (AgentChannel TimedOutChannel in TimedOutChannels)
+                        {
+                            if (TimedOutChannel.InteractNum == CLI.InteractContext) { CLI.loop._client.Prompt = "IERat$ "; }
+                            channels.Remove(TimedOutChannel);
                         }
                     }
-                    foreach (AgentChannel TimedOutChannel in TimedOutChannels)
-                    {
-                        if (TimedOutChannel.InteractNum == CLI.InteractContext) { CLI.loop._client.Prompt = "IERat$ "; }
-                        channels.Remove(TimedOutChannel);
-                    }
-                }              
+                }
+                catch
+                {
+                }
+
             }
         }
     }

