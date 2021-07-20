@@ -111,6 +111,7 @@ namespace IERatServer.lib
                     }
                     foreach (AgentChannel TimedOutChannel in TimedOutChannels)
                     {
+                        if (TimedOutChannel.InteractNum == CLI.InteractContext) { CLI.loop._client.Prompt = "IERat$ "; }
                         channels.Remove(TimedOutChannel);
                     }
                 }              

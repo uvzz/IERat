@@ -11,7 +11,7 @@ namespace IERatServer
         [NamedArgument(ArgumentFlags.Required)]
         public int Port { get; set; }
     }
-    public class Program
+    public class IERatServer
     {
         public static void Main(string[] args)
         {

@@ -15,5 +15,7 @@ namespace IERatServer.lib
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(plainTextBytes);
         }
+
+
     }
 }

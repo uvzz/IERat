@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IERat", "IERat\IERat.csproj", "{A819F019-B155-4E38-8AA2-4E686C871334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IERatServer", "IERatServer\IERatServer.csproj", "{52461785-0155-447F-8600-9101F675A193}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IERatServer", "IERatServer\IERatServer.csproj", "{52461785-0155-447F-8600-9101F675A193}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

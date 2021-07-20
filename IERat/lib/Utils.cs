@@ -51,11 +51,6 @@ namespace IERat.lib
         public TaskObject Task { get; set; }
         public string Notes { get; set; }
 
-        public string ToJSON()
-        {
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            return js.Serialize(this);
-        }
     }
     public class RequestObject
     {

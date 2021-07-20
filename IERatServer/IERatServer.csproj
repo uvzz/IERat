@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Colorful.Console" Version="1.2.15" />
     <PackageReference Include="ConsoleTables" Version="2.4.2" />
     <PackageReference Include="Figgle" Version="0.4.0" />
-    <PackageReference Include="NClap" Version="3.0.0" />
-    <PackageReference Include="Watson" Version="4.2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Watson" Version="4.2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,9 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.CommandLine">
-      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\5.0.203\DotnetTools\dotnet-watch\5.0.203-servicing.21223.17\tools\net5.0\any\System.CommandLine.dll</HintPath>
-    </Reference>
+    <EmbeddedResource Update="Properties\Strings.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Strings.Designer.cs" />
+    <Compile Update="Properties\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
