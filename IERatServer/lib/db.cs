@@ -107,6 +107,7 @@ namespace IERatServer.lib
                             {
                                 Console.ForegroundColor = ConsoleColor.Yellow;
                                 Console.WriteLine($"\n---> Lost connection with agent #{agentChannel.InteractNum}\n");
+                                Logger.Log("info", $"Lost connection with agent {agentChannel.agent.ID}");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 TimedOutChannels.Add(agentChannel);
                             }

