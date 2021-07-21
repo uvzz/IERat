@@ -101,7 +101,7 @@ namespace IERatServer
                     var newSessionNumber = Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"\nNew session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
-                    Logger.Log("info", $"New session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]");
+                    Logger.Log("info", $"New session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}] [ID = {beacon.ID}]");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 var responseString = JsonConvert.SerializeObject(responseObject);

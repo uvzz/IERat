@@ -17,7 +17,7 @@ namespace IERatServer
         public static string LootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Loot");
         public static LoopInputOutputParameters ioParams = new()
         {
-            Prompt = ColoredString.FromString("IERat# ")
+            Prompt = ColoredString.FromString("IERat$ ")
         };
         public static Loop loop = new(typeof(MyCommandType), ioParams);
         public static int InteractContext = 1;
@@ -150,6 +150,7 @@ namespace IERatServer
         {
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
+                Logger.Log("info", "Killing Server");
                 Environment.Exit(1);
                 return Task.FromResult(CommandResult.Success);
             }
