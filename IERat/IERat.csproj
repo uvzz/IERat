@@ -108,6 +108,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
@@ -190,8 +191,11 @@
     <Compile Include="lib\Agent.cs" />
     <Compile Include="lib\Channel.cs" />
     <Compile Include="IERat.cs" />
+    <Compile Include="lib\CommObjects.cs" />
+    <Compile Include="lib\Modules.cs" />
     <Compile Include="lib\Tasks.cs" />
-    <Compile Include="lib\Utils.cs" />
+    <Compile Include="lib\Utils\av.cs" />
+    <Compile Include="lib\Utils\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

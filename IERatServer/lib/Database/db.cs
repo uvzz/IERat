@@ -1,6 +1,4 @@
 ﻿using ConsoleTables;
-using IERat;
-using IERat.lib;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +10,9 @@ namespace IERatServer.lib
         {
             task = new TaskObject();
         }
-        public Guid AgentID{ get; set; }
+        public Guid AgentID { get; set; }
+
+        public int AgentNumber { get; set; }
         public TaskObject task { get; set; }
     }
     public class Db
@@ -20,26 +20,29 @@ namespace IERatServer.lib
         public static List<AgentChannel> channels = new();
         public static List<TaskHistoryObject> TaskHistory = new();
         public static int IncomingAgentCounter = 1;
-        public static void NewAgentChannel(Agent newAgent, string IP)
+        public static int NewAgentChannel(Agent newAgent, string IP)
         {
+            int newInteractNum = IncomingAgentCounter;
             channels.Add(new AgentChannel
             {
                 agent = newAgent,
                 LastHeartBeatTime = DateTime.Now.ToString(),
                 IPAddress = IP,
-                InteractNum = IncomingAgentCounter
+                InteractNum = newInteractNum
             }) ;
             IncomingAgentCounter++;
+            return newInteractNum;
         }
 
         public static void ListChannels()
         {
-            var table = new ConsoleTable("#", "IP", "Machine", "User", "OS", "Last Seen" , "RAT Version");
+            var table = new ConsoleTable("#", "IP", "Machine", "User", "OS", "AV" , "Version");
             foreach (AgentChannel agentChannel in channels)
             {
-                table.AddRow(agentChannel.InteractNum, agentChannel.IPAddress, agentChannel.agent.Hostname,
-                    $"{agentChannel.agent.Username}@{agentChannel.agent.Domain}",
-                    agentChannel.agent.OSVersion, agentChannel.LastHeartBeatTime, agentChannel.agent.Version);
+                var agent = agentChannel.agent;
+                table.AddRow(agentChannel.InteractNum, agentChannel.IPAddress, agent.Hostname,
+                    $"{agent.Username}@{agentChannel.agent.Domain}",
+                    agent.OSVersion, agent.AV, agent.Version);
             }
             table.Write();
             Console.WriteLine();
@@ -55,17 +58,17 @@ namespace IERatServer.lib
 
         public static void ListTasks()
         {
-            var table = new ConsoleTable("Agent ID", "Command", "args", "Result", "Time");
+            var table = new ConsoleTable("Agent #", "Command", "args", "Result", "Time");
             foreach (TaskHistoryObject taskHistoryObject in TaskHistory)
             {
                 if (taskHistoryObject.task.Result.Length > 50)
                 {
-                    table.AddRow(taskHistoryObject.AgentID, taskHistoryObject.task.Type, taskHistoryObject.task.args,
+                    table.AddRow(taskHistoryObject.AgentNumber, taskHistoryObject.task.Type, taskHistoryObject.task.args,
                         "<Output too long>", taskHistoryObject.task.Time);
                 }
                 else
                 {
-                    table.AddRow(taskHistoryObject.AgentID, taskHistoryObject.task.Type, taskHistoryObject.task.args,
+                    table.AddRow(taskHistoryObject.AgentNumber, taskHistoryObject.task.Type, taskHistoryObject.task.args,
                      taskHistoryObject.task.Result, taskHistoryObject.task.Time);
                 }
             }

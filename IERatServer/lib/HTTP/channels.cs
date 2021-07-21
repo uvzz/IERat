@@ -1,5 +1,4 @@
-﻿using IERat;
-using System;
+﻿using System;
 
 namespace IERatServer.lib
 {

