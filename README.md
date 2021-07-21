@@ -76,7 +76,14 @@ Example for Kali/Debian:
   sudo apt install -y dotnet-runtime-5.0
   sudo dotnet IERatServer.dll --ip=* --port=443
   ```
-
+  
+<!-- Features -->
+## Feature
+* File downloads
+* keylogger module [loaded in-memory]
+* Screenshot capture
+* AV detection
+  
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -88,11 +95,10 @@ Example for Kali/Debian:
 <!-- ROADMAP -->
 ## Roadmap
 
-- Add HTTPS Support.
-- File uploads/downloads.
-- Screenshot option.
-- Webcam capture.
-- Keylogger.
+- HTTPS Support.
+- File uploads.
+- persistence
+- detect VM.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
