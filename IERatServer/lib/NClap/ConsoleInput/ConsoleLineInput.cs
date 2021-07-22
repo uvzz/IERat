@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NClap.Utilities;
+using System.Drawing;
+using Console = Colorful.Console;
 
 namespace NClap.ConsoleInput
 {

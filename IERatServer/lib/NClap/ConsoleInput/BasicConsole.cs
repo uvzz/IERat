@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using NClap.Utilities;
+
 
 namespace NClap.ConsoleInput
 {
@@ -322,8 +324,15 @@ namespace NClap.ConsoleInput
         /// Writes text to the console.
         /// </summary>
         /// <param name="text">The text to write.</param>
-        public void Write(string text) => Console.Write(text);
-
+        public void Write(string text)
+        {
+            Colorful.StyleSheet styleSheet = new(Color.White);
+            styleSheet.AddStyle(@"(?<=\().+?(?=\))", Color.Blue);
+            styleSheet.AddStyle(@"[\(\)\[\]]", Color.Green);
+            styleSheet.AddStyle(@"[@]", Color.Red);
+            Colorful.Console.WriteStyled(text, styleSheet);
+            //Console.Write(text);
+        }
         /// <summary>
         /// Writes a line of text to the console.
         /// </summary>
