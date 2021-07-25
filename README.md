@@ -78,27 +78,18 @@ Example for Kali/Debian:
   ```
   
 <!-- Features -->
-## Feature
-* File downloads
+## Features
+* File downloads/uploads
 * keylogger module [loaded in-memory]
-* Screenshot capture
+* Screenshot captures
 * AV detection
-  
-<!-- USAGE EXAMPLES -->
-## Usage
-
-  * Example with CrowdStrike sensor:
-<p align="center">
-  <img src="https://github.com/uvzz/IERat/blob/master/gif.gif" alt="gif">
-</p>
   
 <!-- ROADMAP -->
 ## Roadmap
 
 - HTTPS Support.
-- File uploads.
-- persistence
-- detect VM.
+- Persistence.
+- VM detection.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
