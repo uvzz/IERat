@@ -188,6 +188,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="lib\Actions\Screenshot.cs" />
+    <Compile Include="lib\Actions\Upload.cs" />
     <Compile Include="lib\Agent.cs" />
     <Compile Include="lib\Channel.cs" />
     <Compile Include="IERat.cs" />

@@ -27,6 +27,7 @@ namespace IERat.lib
         public Guid AgentID { get; set; }
         public List<TaskObject> CompletedTasks { get; set; }
         public string ToJSON() {
+
             return new JavaScriptSerializer().Serialize(this);
         }
     }
