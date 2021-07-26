@@ -15,7 +15,6 @@
   
   
 <p align="center">
-  <a href="https://github.com/uvzz/IERat">
     <img src="https://i.imgur.com/cezBrFT.png" alt="poc">
   </a>  
 
