@@ -58,6 +58,8 @@ Example for Kali/Debian:
   sudo dotnet IERatServer.dll --ip=* --port=443
   ```
   
+* All compiled module DLL files should reside inside the Modules directory of the server (for now there's only a keylogger module).
+  
 <!-- Features -->
 ## Features
 * File downloads/uploads
