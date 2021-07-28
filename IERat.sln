@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IERat", "IERat\IERat.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IERatServer", "IERatServer\IERatServer.csproj", "{52461785-0155-447F-8600-9101F675A193}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyLogModule", "KeyLogModule\KeyLogModule.csproj", "{536C356D-813A-43E1-A967-88B8117E5485}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{D5E187C1-C24C-4402-8767-06333F01D046}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraModule", "..\cameraTest\cameraTest\CameraModule.csproj", "{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyLogModule", "Modules\KeyLogModule\KeyLogModule.csproj", "{536C356D-813A-43E1-A967-88B8117E5485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraModule", "Modules\CameraModule\CameraModule.csproj", "{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
