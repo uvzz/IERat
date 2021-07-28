@@ -15,7 +15,6 @@
   
   
 <p align="center">
-  <a href="https://github.com/uvzz/IERat">
     <img src="https://i.imgur.com/cezBrFT.png" alt="poc">
   </a>  
 
@@ -58,6 +57,8 @@ Example for Kali/Debian:
   sudo apt install -y dotnet-runtime-5.0
   sudo dotnet IERatServer.dll --ip=* --port=443
   ```
+  
+* All compiled module DLL files should reside inside the Modules directory of the server (for now there's only a keylogger module).
   
 <!-- Features -->
 ## Features
