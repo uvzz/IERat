@@ -26,9 +26,10 @@ namespace IERat.lib
         }
         public Guid AgentID { get; set; }
         public List<TaskObject> CompletedTasks { get; set; }
-        public string ToJSON() {
-
-            return new JavaScriptSerializer().Serialize(this);
+        public string ToJSON()
+        {
+            var js = new JavaScriptSerializer { MaxJsonLength = 2097152 * 3 };
+            return js.Serialize(this);
         }
     }
 }

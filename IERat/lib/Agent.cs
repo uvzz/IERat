@@ -22,7 +22,7 @@ namespace IERat
             CompletedAgentTasks = new Queue<TaskObject>();
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Cwd = Directory.GetCurrentDirectory();
-            LoadedModules = new Dictionary<String, Thread>();
+            LoadedModules = new Dictionary<String, object>();
         }
         public Guid ID { get; set; }
         public string Username { get; set; }
@@ -35,7 +35,7 @@ namespace IERat
         public string Version { get; set; }
         public Queue<TaskObject> AgentTasks { get; set; }
         public Queue<TaskObject> CompletedAgentTasks { get; set; }
-        public Dictionary<String, Thread> LoadedModules { get; set; }
+        public Dictionary<String, object> LoadedModules { get; set; }
 
         public string GenerateBeacon()
         {

