@@ -66,6 +66,7 @@ Example for Kali/Debian:
 * keylogger module [loaded in-memory]
 * Screenshot captures
 * AV detection
+* Webcam capture
   
 <!-- ROADMAP -->
 ## Roadmap
