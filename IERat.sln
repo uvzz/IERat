@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyLogModule", "Modules\Key
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraModule", "Modules\CameraModule\CameraModule.csproj", "{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromeModule", "ChromeModule\ChromeModule.csproj", "{08A1B5C0-6053-46B1-A84B-A75001DE3D78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08A1B5C0-6053-46B1-A84B-A75001DE3D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08A1B5C0-6053-46B1-A84B-A75001DE3D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08A1B5C0-6053-46B1-A84B-A75001DE3D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08A1B5C0-6053-46B1-A84B-A75001DE3D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{536C356D-813A-43E1-A967-88B8117E5485} = {D5E187C1-C24C-4402-8767-06333F01D046}
 		{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E} = {D5E187C1-C24C-4402-8767-06333F01D046}
+		{08A1B5C0-6053-46B1-A84B-A75001DE3D78} = {D5E187C1-C24C-4402-8767-06333F01D046}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80159C24-DC3A-44B5-B5DA-661506F50DA9}

