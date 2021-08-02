@@ -141,7 +141,7 @@ namespace IERat.lib
             }
             catch
             {
-                Console.WriteLine("parsing failed");
+                Debug.WriteLine("parsing failed");
             }
         }
         public void ExecuteAgentTasks()
