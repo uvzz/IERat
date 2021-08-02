@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyLogModule", "Modules\Key
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraModule", "Modules\CameraModule\CameraModule.csproj", "{E66A7517-315C-4B1E-8CE5-D81E4BF93D6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromeModule", "ChromeModule\ChromeModule.csproj", "{08A1B5C0-6053-46B1-A84B-A75001DE3D78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromeModule", "Modules\ChromeModule\ChromeModule.csproj", "{08A1B5C0-6053-46B1-A84B-A75001DE3D78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
