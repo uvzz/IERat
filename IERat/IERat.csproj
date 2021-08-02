@@ -188,6 +188,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="lib\Actions\FileOperations.cs" />
     <Compile Include="lib\Actions\Screenshot.cs" />
     <Compile Include="lib\Actions\Upload.cs" />
     <Compile Include="lib\Agent.cs" />

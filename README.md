@@ -58,23 +58,25 @@ Example for Kali/Debian:
   sudo dotnet IERatServer.dll --ip=* --port=443
   ```
   
-* All compiled module DLL files should reside inside the Modules directory of the server (for now there's only a keylogger module).
+* All compiled module DLL files should reside inside the Modules directory of the server. They are set to compile inside this folder in the project configuration.
+
   
 <!-- Features -->
 ## Features
-* File downloads/uploads
-* keylogger module [loaded in-memory]
+* File downloads/uploads [very large file transfers can be unstable for now]
+* Keylogger module
 * Screenshot captures
 * AV detection
 * Webcam capture module
-* Chrome password recovery module
+* Chrome passwords module
+* All modules are loaded from RAM
   
 <!-- ROADMAP -->
 ## Roadmap
 
-- HTTPS Support.
-- Persistence.
-- VM detection.
+* HTTPS Suppor.
+* Persistence
+* VM detection
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
