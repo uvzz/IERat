@@ -91,7 +91,7 @@ namespace IERatServer
             catch (Exception ex)
             {
                 Console.WriteLine("\nError - " + ex.Message);
-                Logger.Log("error", $"ex.Message");
+                Logger.Log("error", $"{ex.Message}");
             }
         }
 
