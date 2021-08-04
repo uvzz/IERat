@@ -19,8 +19,8 @@ namespace IERat
 
         static void Main()
         {
-            //AWSChannel.Open();
-            LocalChannel.Open();
+            AWSChannel.Open();
+            //LocalChannel.Open();
         }
     }
 }

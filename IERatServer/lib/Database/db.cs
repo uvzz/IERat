@@ -12,7 +12,6 @@ namespace IERatServer.lib
             task = new TaskObject();
         }
         public Guid AgentID { get; set; }
-
         public int AgentNumber { get; set; }
         public TaskObject task { get; set; }
     }
@@ -37,13 +36,13 @@ namespace IERatServer.lib
 
         public static void ListChannels()
         {
-            var table = new ConsoleTable("#", "IP", "Machine", "User", "OS", "AV" , "Version");
+            var table = new ConsoleTable("#", "IP", "Machine", "User@Domain", "Local Admin" , "Elevated", "OS", "AV");
             foreach (AgentChannel agentChannel in channels)
             {
                 var agent = agentChannel.agent;
                 table.AddRow(agentChannel.InteractNum, agentChannel.IPAddress, agent.Hostname,
-                    $"{agent.Username}@{agentChannel.agent.Domain}",
-                    agent.OSVersion, agent.AV, agent.Version);
+                    $"{agent.Username}@{agentChannel.agent.Domain}", agent.LocalAdministrator,
+                    agent.Elevated, agent.OSVersion, agent.AV);
             }
             table.Write();
             Console.WriteLine();
