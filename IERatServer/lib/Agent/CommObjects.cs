@@ -7,12 +7,12 @@ namespace IERatServer.lib
     {
         public ResponseObject()
         {
-            Type = "NewTask"; // FilePart, NewAgent
-            Task = new TaskObject();
+            Type = "NewTasks"; // FilePart, NewAgent
+            Tasks = new List<TaskObject> { };
         }
         public string Type { get; set; }
         public Guid AgentID { get; set; }
-        public TaskObject Task { get; set; }
+        public List<TaskObject> Tasks { get; set; }
         public string Notes { get; set; }
 
     }
