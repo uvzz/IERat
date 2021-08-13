@@ -15,7 +15,7 @@
   
   
 <p align="center">
-    <img src="https://i.imgur.com/cezBrFT.png" alt="poc">
+    <img src="https://i.imgur.com/Juwbldp.png" alt="poc">
   </a>  
 
 <!-- ABOUT THE PROJECT -->
