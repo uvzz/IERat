@@ -422,7 +422,7 @@ namespace IERatServer
                 Console.WriteLine("ls - list folders and files in the agent's current directory");
                 Console.WriteLine("mv <source> <destination> - move a file or a folder, change a file's name");
                 Console.WriteLine("cp <source> <destination> - copy a file or a folder");
-                Console.WriteLine("del <destination> - delete a file or a folder");
+                Console.WriteLine("rm <destination> - delete a file or a folder");
                 Console.WriteLine("upload <location on server> - upload a file to the agent's current directory");
                 Console.WriteLine("download <location on agent> - download a file to to the loot folder");
                 Console.WriteLine("exec <file to run> - execute a file");

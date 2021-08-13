@@ -97,7 +97,7 @@ File Commands
 ls - list folders and files in the agent's current directory
 mv <source> <destination> - move a file or a folder, change a file's name
 cp <source> <destination> - copy a file or a folder
-del <destination> - delete a file or a folder
+rm <destination> - delete a file or a folder
 upload <location on server> - upload a file to the agent's current directory
 download <location on agent> - download a file to to the loot folder
 exec <file to run> - execute a file
