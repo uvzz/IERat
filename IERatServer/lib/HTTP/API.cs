@@ -41,6 +41,9 @@ namespace IERatServer
                     }
                     else
                     {
+                        if (taskObject.Result == "True") { taskObject.Result = "Operation completed successfully."; }
+                        if (taskObject.Result == "False") { taskObject.Result = "Operation failed."; }
+
                         if (taskObject.Type != "cd")  {
                             CLI.ScreenMessage($"Command Output received [{taskObject.Type} command]: {taskObject.Result}");
                         }

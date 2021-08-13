@@ -63,10 +63,11 @@ Example for Kali/Debian:
   
 <!-- Features -->
 ## Features
-* File downloads/uploads [very large file transfers can be unstable for now]
+* File downloads/uploads (very large file transfers can be unstable for now)
 * Keylogger module
 * Screenshot captures
 * AV detection
+* UAC Bypass (Taskmanager cleanup task method)
 * Webcam capture module
 * Chrome passwords module
 * All modules are loaded from RAM
@@ -74,9 +75,10 @@ Example for Kali/Debian:
 <!-- ROADMAP -->
 ## Roadmap
 
-* HTTPS Suppor.
+* HTTPS Support
 * Persistence
 * VM detection
+* Load and run PowerShell scripts from RAM using Automation runspace
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
