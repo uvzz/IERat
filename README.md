@@ -84,8 +84,8 @@ Example for Kali/Debian:
 ## Available Commands
   ```
 Management Commands
-===================
-list - Print information about the active agents
+=====================
+agents - Print information about the active agents
 history - Print information about commands and their results
 interact <agent number> - interact with an agent
 timeout <number> - set the inactivity time in seconds for agent disconnections
@@ -93,7 +93,7 @@ clear - clear the CLI from messages
 exit - kill the server
 
 File Commands
-===================
+===============
 ls - list folders and files in the agent's current directory
 mv <source> <destination> - move a file or a folder, change a file's name
 cp <source> <destination> - copy a file or a folder
@@ -103,22 +103,23 @@ download <location on agent> - download a file to to the loot folder
 exec <file to run> - execute a file
 
 Spy Shit
-=========
+==========
 screenshot - take a screenshot of the active desktop
 keylogger <start/stop/collect/clear> - start/stop a keylogger thread, collect results or clear them
 capture_camera - capture a webcam image of the user jerking off or something...
 
 Credentials
-============
+=============
 chrome - get all chrome passwords
 
 Privileges
-==========
-uacbypass_taskmanager - Bypass UAC using the taskmanager cleanup task method
+============
+uacbypass_taskmanager - bypass UAC using the taskmanager cleanup task method
 
 Command execution
-==========
+===================
 shell - run a shell command using cmd.exe (not recommended)
+
 
   ```
 
