@@ -11,10 +11,8 @@ namespace IERatServer.lib
             {
                 using (FileStream objFilestream = new("IERatServer.log", FileMode.Append, FileAccess.Write))
                 {
-                    using (StreamWriter objStreamWriter = new((Stream)objFilestream))
-                    {
-                        objStreamWriter.WriteLine($"{DateTime.Now}:{type}:{strMessage}");
-                    }
+                    using StreamWriter objStreamWriter = new((Stream)objFilestream);
+                    objStreamWriter.WriteLine($"{DateTime.Now}:{type}:{strMessage}");
                 }
                 return true;
             }

@@ -21,7 +21,7 @@ namespace IERat.lib
                 }
             }
             var Start = Type.GetMethod("Start");
-            if (Type.Name.Contains("klog"))
+            if (Type.Name.Contains("Klog"))
             {
                 Thread ModuleThreadTest = new Thread(() => StartMethod(Start));
                 return ModuleThreadTest;

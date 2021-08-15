@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Threading;
 
 namespace IERatServer.lib
@@ -18,11 +16,11 @@ namespace IERatServer.lib
             Elevated = "N\\A";
             OSVersion = "N\\A";
             AV = "N\\A";
-            AgentTasks = new Queue<TaskObject>();
-            CompletedAgentTasks = new Queue<TaskObject>();
-            Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            Cwd = Directory.GetCurrentDirectory();
-            LoadedModules = new Dictionary<String, Thread>();
+            AgentTasks = new Queue<TaskObject>() { };
+            CompletedAgentTasks = new Queue<TaskObject>() { };
+            Version = "N\\A";
+            Cwd = "N\\A";
+            LoadedModules = new Dictionary<String, Thread>() { };
         }
         public Guid ID { get; set; }
         public string Username { get; set; }

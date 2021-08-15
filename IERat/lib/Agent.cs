@@ -1,8 +1,6 @@
 ﻿using IERat.lib;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices.AccountManagement;
-using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Reflection;
