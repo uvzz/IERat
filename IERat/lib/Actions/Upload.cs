@@ -13,6 +13,7 @@ namespace IERat.lib.Actions
             var fileBytes = Utils.Decompress(Convert.FromBase64String(Bytes2Save));
             destinationFile.Write(fileBytes, 0, fileBytes.Length);
             NewAgentTask.Result = "File uploaded successfully";
+            NewAgentTask.args = ""; // so the file content won't be sent to the server
             destinationFile.Close();
         }
     }

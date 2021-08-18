@@ -1,4 +1,6 @@
 ﻿using IERat.lib;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IERat
 {
@@ -19,8 +21,8 @@ namespace IERat
 
         static void Main()
         {
+            LocalChannel.Open();
             AWSChannel.Open();
-            //LocalChannel.Open();
         }
     }
 }

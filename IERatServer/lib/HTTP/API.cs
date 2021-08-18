@@ -87,6 +87,7 @@ namespace IERatServer
                     Type = "NewTasks",
                     Tasks = GetTasksForAgent(requestObject.AgentID),
                     Notes = "",
+                    AgentID = requestObject.AgentID
                 };
                 var responseString = JsonConvert.SerializeObject(responseObject);
                 await ctx.Response.Send(ServerUtils.GenerateResponse(responseString));
@@ -109,7 +110,8 @@ namespace IERatServer
                 ResponseObject responseObject = new()
                 {
                     Type = "NewAgent",
-                    Notes = "Ok",
+                    Notes = "ID already exists",
+                    AgentID = beacon.ID
                 };
                 if (!Db.AgentExists(beacon.ID))
                 {
