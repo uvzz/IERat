@@ -63,6 +63,7 @@ Example for Kali/Debian:
   
 <!-- Features -->
 ## Features
+* Connect to several C2 servers at the same time
 * File downloads/uploads (very large file transfers can be unstable for now)
 * Keylogger module
 * Screenshot captures

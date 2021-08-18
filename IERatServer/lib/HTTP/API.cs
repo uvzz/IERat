@@ -19,8 +19,9 @@ namespace IERatServer
                 Logger.Log("info", $"Server Started at address {IP}:{Port}");
             }
             catch (Exception ex) { 
-                Console.WriteLine(ex.GetBaseException().Message);
+                Console.WriteLine("\n[-] Error - " + ex.GetBaseException().Message);
                 Logger.Log("error", ex.GetBaseException().Message);
+                Environment.Exit(1);
             }
         }
 
